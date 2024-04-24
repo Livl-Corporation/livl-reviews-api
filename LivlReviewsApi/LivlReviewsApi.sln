@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivlReviewsApi", "LivlReviewsApi.csproj", "{8B8A7852-2B1E-422F-8F19-DBE53AE23F3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LivlReviewsApi", "LivlReviewsApi.csproj", "{8B8A7852-2B1E-422F-8F19-DBE53AE23F3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivlReviewsApiTests", "..\LivlReviewsApiTests\LivlReviewsApiTests.csproj", "{379896DB-315F-48FB-9372-A03989297358}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8B8A7852-2B1E-422F-8F19-DBE53AE23F3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B8A7852-2B1E-422F-8F19-DBE53AE23F3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B8A7852-2B1E-422F-8F19-DBE53AE23F3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{379896DB-315F-48FB-9372-A03989297358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{379896DB-315F-48FB-9372-A03989297358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{379896DB-315F-48FB-9372-A03989297358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{379896DB-315F-48FB-9372-A03989297358}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
