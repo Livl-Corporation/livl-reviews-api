@@ -3,9 +3,15 @@ namespace LivlReviewsApiTests
     public class UnitTest1
     {
         [Fact]
-        public void Test1()
+        public void GoodTest()
         {
+            Assert.True(true);
+        }
 
+        [Fact]
+        public void FalseTest()
+        {
+            Assert.True(false);
         }
     }
 }
