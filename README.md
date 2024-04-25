@@ -1,0 +1,16 @@
+# Livl reviews api
+
+## Install dev database
+
+- You need to have docker installed and running
+- Navigate to the postgres-compose folder
+- Run `docker-compose up -d`
+- The database will be available at `localhost:5432`
+- The default credentials are displayed in the docker-compose file.
+- Theses default credentials are also used in the application configuration file (appsettings.json) at the root of the LivlReviewsApi project.s
+
+## Migrations
+
+- To create a migration you can use the Rider's integrated tools by right clicking on the LivlReviews Api project, then "Entity Framework Core" -> "Add Migration". You can manage everything else from there.
+- Otherwise, figure it out yourself with visual studio. You can also use the dotnet ef command line tool. (maybe you will need to install it with `dotnet tool install --global dotnet-ef`)
+- You can also watch [this video](https://youtu.be/z7G6HV7WWz0?si=UtG2vFA434Mu8dFu&t=337) who will explain how to create new tables and do the migrations in visual studio.

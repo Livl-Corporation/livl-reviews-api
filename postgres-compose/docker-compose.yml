@@ -1,0 +1,14 @@
+services:
+  postresql:
+    image: postgres:15.5
+    restart: always
+    environment:
+      POSTGRES_USER: psUser
+      POSTGRES_PASSWORD: psPassword
+      POSTGRES_DB: psDbName
+    ports:
+      - 5432:5432
+    volumes:
+      - psql:/var/lib/postgresql/data
+volumes:
+  psql:
