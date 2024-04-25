@@ -2,11 +2,11 @@ namespace LivlReviewsApi.Data;
 
 public class User
 {
-    public int Id { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string? Description { get; set; }
-    public string? AvatarUri { get; set; }
-    public string Role { get; set; }
-    public DateTime CreatedOn { get; set; }
+    public int Id { get; init; }
+    public required string Username { get; init; }
+    public required string Password { get; init; }
+    public string? Description { get; init; }
+    public string? AvatarUri { get; init; }
+    public required string Role { get; init; }
+    public required DateTime CreatedOn { get; init; }
 }
