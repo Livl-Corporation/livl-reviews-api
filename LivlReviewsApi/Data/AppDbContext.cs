@@ -1,22 +1,21 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace LivlReviewsApi.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityUserContext<User>
 {
-    protected readonly IConfiguration Configuration;
-
-    public AppDbContext(IConfiguration configuration)
+    // public DbSet<Page> Pages => Set<Page>();
+    
+    public AppDbContext (DbContextOptions<AppDbContext> options)
+        : base(options)
     {
-        Configuration = configuration;
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-        // connect to postgres with connexion string from app settings
-        options.UseNpgsql(Configuration.GetConnectionString("DatabaseConnection"));
+        
     }
     
-    public DbSet<User> Users { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+    }
 }

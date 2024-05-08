@@ -1,12 +1,9 @@
+using LivlReviewsApi.Enums;
+using Microsoft.AspNetCore.Identity;
+
 namespace LivlReviewsApi.Data;
 
-public class User
+public class User : IdentityUser
 {
-    public int Id { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string? Description { get; set; }
-    public string? AvatarUri { get; set; }
-    public string Role { get; set; }
-    public DateTime CreatedOn { get; set; }
+    public Role Role { get; set; }
 }
