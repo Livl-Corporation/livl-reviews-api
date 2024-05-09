@@ -1,3 +1,5 @@
+using LivlReviews.Email;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +8,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddTransient<EmailService>();
+builder.Services.AddTransient<IEmailContentService, EmailContentService>();
 
 var app = builder.Build();
 
