@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LivlReviewsApi", "LivlRevie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LivlReviewsApiTests", "..\LivlReviewsApiTests\LivlReviewsApiTests.csproj", "{379896DB-315F-48FB-9372-A03989297358}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivlReviewsApi.Mail", "..\LivlReviewsApiMail\LivlReviewsApi.Mail.csproj", "{30A0D478-B1DC-4178-87F9-577767922A85}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivlReviews.Email", "..\LivlReviews.Email\LivlReviews.Email.csproj", "{A6CABB51-8179-4607-80FB-EDE5194A8C31}"
 EndProject
 Global
