@@ -6,24 +6,25 @@ namespace LivlReviewsApiTests;
 
 public class EmailServiceTests
 {
-    private readonly Mock<IOptions<SmtpSettings>> _smtpSettingsMock;
     private readonly Mock<IEmailContentService> _emailContentServiceMock;
     private readonly EmailService _emailService;
 
     public EmailServiceTests()
     {
-        _smtpSettingsMock = new Mock<IOptions<SmtpSettings>>();
+        Mock<IOptions<SmtpSettings>> smtpSettingsMock = new();
         _emailContentServiceMock = new Mock<IEmailContentService>();
 
-        _smtpSettingsMock.Setup(s => s.Value).Returns(new SmtpSettings
+        smtpSettingsMock.Setup(s => s.Value).Returns(new SmtpSettings
         {
             Server = "localhost",
             Port = 1025,
+            Username = "user",
+            Password = "password",
             EnableSsl = false,
             SenderEmail = "noreply@yourapp.com"
         });
 
-        _emailService = new EmailService(_smtpSettingsMock.Object, _emailContentServiceMock.Object);
+        _emailService = new EmailService(smtpSettingsMock.Object, _emailContentServiceMock.Object);
     }
 
     [Fact]
