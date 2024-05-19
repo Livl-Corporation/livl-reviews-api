@@ -6,7 +6,6 @@ namespace LivlReviewsApi.Data;
 
 public class AppDbContext : IdentityUserContext<User>
 {
-    // public DbSet<Page> Pages => Set<Page>();
     
     public AppDbContext (DbContextOptions<AppDbContext> options)
         : base(options)
