@@ -30,7 +30,12 @@ public class UsersController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-
+        
+        if(request.Email is null || request.Password is null)
+        {
+            return BadRequest("Email and password are required");
+        }
+        
         string userName = new MailAddress(request.Email).User;
         
         var result = await _userManager.CreateAsync(
