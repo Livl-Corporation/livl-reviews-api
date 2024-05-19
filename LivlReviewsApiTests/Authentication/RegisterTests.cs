@@ -25,12 +25,4 @@ public class RegisterTests
         
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
-
-    // [Fact]
-    // public async Task Should_add_to_storage_when_new_user_registered()
-    // {
-    //     var api = new LivlReviewsApiFactory();
-    //     var httpClient = api.CreateClient();
-    //     var dbContext = api.CreateTestingDbContext();
-    // }
 }
