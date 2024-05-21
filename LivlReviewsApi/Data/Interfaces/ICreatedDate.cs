@@ -1,6 +1,6 @@
 namespace LivlReviewsApi.Data.Interfaces;
 
-public class ICreatedDate
+public interface ICreatedDate
 {
-    
+    DateTime CreatedAt { get; set; }
 }
