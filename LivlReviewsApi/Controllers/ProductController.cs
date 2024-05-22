@@ -7,7 +7,7 @@ namespace LivlReviewsApi.Controllers ;
 
 [Authorize]
 [ApiController]
-[Route("/api/[controller]")]
+[Route("[controller]")]
 public class ProductController : ControllerBase
 {
     private readonly IRepository<Product> repository;
