@@ -17,7 +17,7 @@ public class RegisterTests
         var api = new LivlReviewsApiFactory();
         var httpClient = api.CreateClient();
         
-        var response = await httpClient.PostAsJsonAsync("/api/users/register", new
+        var response = await httpClient.PostAsJsonAsync("/users/register", new
         {
             Email = "lsqdmkjflmkdsqjfmlkjsqaplqsdfqdsfqsdfqdslkf@email.com",
             Password = "12345azertydsqfmlkj"

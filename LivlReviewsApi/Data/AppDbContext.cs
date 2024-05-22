@@ -17,4 +17,6 @@ public class AppDbContext : IdentityUserContext<User>
     {
         base.OnModelCreating(modelBuilder);
     }
+    
+    public DbSet<InvitationToken> InvitationTokens { get; set; }
 }

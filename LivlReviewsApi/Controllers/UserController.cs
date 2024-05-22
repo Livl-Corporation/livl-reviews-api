@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LivlReviewsApi.Controllers;
 
 [ApiController]
-[Route("/api/[controller]")]
+[Route("[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
@@ -20,6 +20,31 @@ public class UsersController : ControllerBase
         _userManager = userManager;
         _context = context;
         _tokenService = tokenService;
+    }
+
+    [HttpPost]
+    [Route("invite")]
+    public async Task<IActionResult> Invite(InviteUserRequest request)
+    {
+        if (request.Email is null)
+        {
+            return BadRequest("Email is required");
+        }
+        var userName = new MailAddress(request.Email).User;
+        var user = new User { Email = request.Email, Role = Role.User, UserName = userName };
+        var result = await _userManager.CreateAsync(user);
+        
+        if (result.Succeeded)
+        {
+            return CreatedAtAction(nameof(Invite), new { email = request.Email, role = Role.User }, request);
+        }
+        
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(error.Code, error.Description);
+        }
+        
+        return BadRequest(ModelState);
     }
     
     [HttpPost]
