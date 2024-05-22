@@ -1,22 +1,52 @@
+using LivlReviewsApi.Data.Interfaces;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 
 namespace LivlReviewsApi.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityUserContext<User>
 {
-    protected readonly IConfiguration Configuration;
-
-    public AppDbContext(IConfiguration configuration)
+    
+    public AppDbContext (DbContextOptions<AppDbContext> options)
+        : base(options)
     {
-        Configuration = configuration;
+        
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
+    public override int SaveChanges()
     {
-        // connect to postgres with connexion string from app settings
-        options.UseNpgsql(Configuration.GetConnectionString("DatabaseConnection"));
+        SetCreatedAtProperty();
+        SetUpdatedAtProperty();
+        
+        return base.SaveChanges();
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+    }
+
+    private void SetCreatedAtProperty()
+    {
+        IEnumerable<EntityEntry> entries = ChangeTracker.Entries().Where(e => e.State == EntityState.Added && e.Metadata.GetProperties().Any(p => p.Name == "CreatedAt"));
+
+        foreach (var entry in entries)
+        {
+            ((ICreatedDate) entry.Entity).CreatedAt = DateTime.Now;
+        }
+    }
+
+    private void SetUpdatedAtProperty()
+    {
+        IEnumerable<EntityEntry> entries = ChangeTracker.Entries().Where(e => e.State is EntityState.Added or EntityState.Modified  && e.Metadata.GetProperties().Any(p => p.Name == "UpdatedAt"));
+
+        foreach (var entry in entries)
+        {
+            ((IUpdatedDate) entry.Entity).UpdatedAt = DateTime.Now;
+        }
     }
     
-    public DbSet<User> Users { get; set; }
+    public DbSet<Product> Products { get; set; }
 }
