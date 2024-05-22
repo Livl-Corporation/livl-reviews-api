@@ -27,15 +27,18 @@ public class EmailServiceTests
             Email = "john.doe@example.com"
         };
         var recipients = new List<RecipientEmailInvitation> { recipient };
+        
+        var emailContent = "Email content";
+        var emailSubject = "Account Invitation";
 
         _emailContentServiceMock.Setup(s => s.GenerateAccountInvitationContent(recipient.Name, recipient.ActivationLink))
-            .Returns("Email content");
+            .Returns(emailContent);
 
         // Act
         await _emailService.SendAccountInvitationEmailAsync(recipients);
 
         // Assert
         _emailContentServiceMock.Verify(s => s.GenerateAccountInvitationContent(recipient.Name, recipient.ActivationLink), Times.Once);
-        _emailSenderMock.Verify(s => s.SendEmailAsync(recipient.Email, "Account Invitation", "Email content"), Times.Once);
+        _emailSenderMock.Verify(s => s.SendEmailAsync(recipient.Email, emailSubject, emailContent), Times.Once);
     }
 }
