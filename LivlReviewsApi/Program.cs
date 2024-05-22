@@ -56,6 +56,8 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<IPaginatedRepository<Product>, PaginatedEntityRepository<Product>>();
+builder.Services.AddScoped<IRepository<InvitationToken>, EntityRepository<InvitationToken>>();
+
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
@@ -108,6 +110,8 @@ builder.Services.AddAuthentication(options =>
 
 
 var app = builder.Build();
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

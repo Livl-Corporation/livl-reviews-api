@@ -1,7 +1,10 @@
 using System.Net.Mail;
+using System.Security.Claims;
 using LivlReviewsApi.Data;
 using LivlReviewsApi.Enums;
+using LivlReviewsApi.Repositories.Interfaces;
 using LivlReviewsApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,14 +17,17 @@ public class UsersController : ControllerBase
     private readonly UserManager<User> _userManager;
     private readonly AppDbContext _context;
     private readonly TokenService _tokenService;
+    private readonly IRepository<InvitationToken> _invitationTokenRepository;
 
-    public UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger)
+    public UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository)
     {
         _userManager = userManager;
         _context = context;
         _tokenService = tokenService;
+        _invitationTokenRepository = invitationTokenRepository;
     }
 
+    [Authorize]
     [HttpPost]
     [Route("invite")]
     public async Task<IActionResult> Invite(InviteUserRequest request)
@@ -30,12 +36,24 @@ public class UsersController : ControllerBase
         {
             return BadRequest("Email is required");
         }
+        
         var userName = new MailAddress(request.Email).User;
         var user = new User { Email = request.Email, Role = Role.User, UserName = userName };
         var result = await _userManager.CreateAsync(user);
         
         if (result.Succeeded)
         {
+            var randomToken = Guid.NewGuid().ToString();
+            ClaimsPrincipal currentUser = this.User;
+            var userIdClaim = currentUser.Claims.FirstOrDefault(c => c.Type == "userGUID");
+            if(userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+            
+            var invitationToken = new InvitationToken { Token = randomToken, InvitedById = userIdClaim.Value, InvitedUserId  = user.Id};
+            _invitationTokenRepository.Add(invitationToken);
+            
             return CreatedAtAction(nameof(Invite), new { email = request.Email, role = Role.User }, request);
         }
         
