@@ -3,82 +3,103 @@ using LivlReviewsApi.Repositories;
 
 namespace LivlReviewsApiTests.Products;
 
-public class ProductTests
+public class ProductTests : IDisposable
 {
-    // Example products
-    public static IEnumerable<object[]> ExampleProducts =>
-        new List<object[]>
-        {
-            new object[]
-            {
-                new List<Product>
-                {
-                    new Product
-                    {
-                        Name = "Product 1",
-                        Image = "Image 1",
-                        URL = "URL 1",
-                        VinerURL = "Viner URL 1"
-                    },
-                    new Product
-                    {
-                        Name = "Product 2",
-                        Image = "Image 2",
-                        URL = "URL 2",
-                        VinerURL = "Viner URL 2"
-                    },
-                    new Product
-                    {
-                        Name = "Product 3",
-                        Image = "Image 3",
-                        URL = "URL 3",
-                        VinerURL = "Viner URL 3"
-                    },
-                    new Product
-                    {
-                        Name = "Product 4",
-                        Image = "Image 4",
-                        URL = "URL 4",
-                        VinerURL = "Viner URL 4"
-                    }
-                }
-            }
-        };
+    private AppDbContext context;
+    private EntityRepository<Category> categoryEntityRepository;
+    private PaginatedEntityRepository<Product> productPaginatedEntityRepository;
+    public ProductTests()
+    {
+        var factory = new LivlReviewsApiFactory();
+        
+        this.context = factory.CreateTestingDbContext();
+        this.productPaginatedEntityRepository = new PaginatedEntityRepository<Product>(context);
+        this.categoryEntityRepository = new EntityRepository<Category>(context);
+        
+        context.Database.EnsureCreated();
+
+        InitializeDatabase();
+    }
+    public void Dispose()
+    {
+        // Clean up
+        this.productPaginatedEntityRepository.DeleteBy(arg => true);
+        this.categoryEntityRepository.DeleteBy(arg => true);
+        
+        context.Database.EnsureDeleted();
+        context.Dispose();
+    }
     
-    [Theory]
-    [MemberData(nameof(ExampleProducts))]
-    public void Get_all_products(List<Product> products)
+    private void InitializeDatabase()
+    {
+        Category cat1 = this.categoryEntityRepository.Add(new Category
+        {
+            Name = "Category 1"
+        });
+        
+        Category cat2 = this.categoryEntityRepository.Add(new Category
+        {
+            Name = "Category 2"
+        });
+        
+        this.productPaginatedEntityRepository.AddRange([
+            new Product
+            {
+                Name = "Product 1",
+                Image = "Image 1",
+                URL = "URL 1",
+                VinerURL = "Viner URL 1",
+                CategoryId = cat1.Id
+            },
+
+            new Product
+            {
+                Name = "Product 2",
+                Image = "Image 2",
+                URL = "URL 2",
+                VinerURL = "Viner URL 2",
+                CategoryId = cat2.Id
+            },
+
+            new Product
+            {
+                Name = "Product 3",
+                Image = "Image 3",
+                URL = "URL 3",
+                VinerURL = "Viner URL 3",
+                CategoryId = cat1.Id
+            },
+
+            new Product
+            {
+                Name = "Product 4",
+                Image = "Image 4",
+                URL = "URL 4",
+                VinerURL = "Viner URL 4",
+                CategoryId = cat2.Id
+            }
+        ]);
+    }
+    
+    [Fact]
+    public void Get_all_products()
     {
         // Arrange
-        var factory = new LivlReviewsApiFactory();
-        var context = factory.CreateTestingDbContext();
-        var repository = new PaginatedEntityRepository<Product>(context);
-        
-        repository.AddRange(products);        
         
         // Act
-        var res = repository.GetAll();
+        var res = productPaginatedEntityRepository.GetAll();
 
         // Assert
         Assert.Equal(4, res.Count);
-        
-        // clean
-        repository.DeleteBy(arg => true);
     }
 
-    [Theory]
-    [MemberData(nameof(ExampleProducts))]
-    public void Get_products_with_pagination(List<Product> products)
+    [Fact]
+    public void Get_products_with_pagination()
     {
         // Arrange
-        var factory = new LivlReviewsApiFactory();
-        var context = factory.CreateTestingDbContext();
-        var repository = new PaginatedEntityRepository<Product>(context);
-
-        repository.AddRange(products);
         
         // Act
-        var res = repository.GetPaginated(new PaginationParameters
+        var res = productPaginatedEntityRepository.GetPaginated(new PaginationParameters
         {
             page = 1,
             pageSize = 2
@@ -90,49 +111,52 @@ public class ProductTests
         Assert.Equal(2, res.Results.Count);
         Assert.Equal(4, res.Metadata.total);
         Assert.Equal(2, res.Metadata.totalPages);
-        
-        // Clean
-        repository.DeleteBy(arg => true);
     }
     
-    [Theory]
-    [MemberData(nameof(ExampleProducts))]
-    public void Get_products_with_predicate(List<Product> products)
+    [Fact]
+    public void Get_products_with_predicate()
     {
         // Arrange
-        var factory = new LivlReviewsApiFactory();
-        var context = factory.CreateTestingDbContext();
-        var repository = new PaginatedEntityRepository<Product>(context);
-
-        repository.AddRange(products);
         
         // Act
-        var res = repository.GetBy(arg => arg.Name == "Product 1");
+        var res = productPaginatedEntityRepository.GetBy(arg => arg.Name == "Product 1");
         
         // Assert
         Assert.Single(res);
         Assert.Equal("Product 1", res[0].Name);
-        
-        // Clean
-        repository.DeleteBy(arg => true);
     }
-    
-    [Theory]
-    [MemberData(nameof(ExampleProducts))]
-    public void Add_product(List<Product> products)
+
+    [Fact]
+    public void Get_products_by_categories()
     {
         // Arrange
-        var factory = new LivlReviewsApiFactory();
-        var context = factory.CreateTestingDbContext();
-        var repository = new PaginatedEntityRepository<Product>(context);
         
         // Act
-        var res = repository.Add(products[0]);
+        var res = productPaginatedEntityRepository.GetBy(arg => arg.Category.Name == "Category 1");
         
         // Assert
-        Assert.Equal("Product 1", res.Name);
+        Assert.Equal(2, res.Count);
+    }
+    
+    [Fact]
+    public void Add_product()
+    {
+        // Arrange
+        Product product = new Product
+        {
+            Name = "Product 5",
+            Image = "Image 5",
+            URL = "URL 5",
+            VinerURL = "Viner URL 5"
+        };
         
-        // Clean
-        repository.DeleteBy(arg => true);
+        // Act
+        var res = productPaginatedEntityRepository.Add(product);
+        
+        // Assert
+        Assert.Equal("Product 5", res.Name);
+
+        // clean
+        productPaginatedEntityRepository.Delete(res);
     }
 }
