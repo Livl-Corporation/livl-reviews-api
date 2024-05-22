@@ -10,6 +10,6 @@ public class Category
     public int? ParentId { get; set; }
     
     public List<Category> Children { get; set; }
-    
-    public List<Product> Products { get; set; }
+
+    public List<Product> Products;
 }
