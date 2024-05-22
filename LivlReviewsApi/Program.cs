@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using LivlReviewsApi.Data;
 using LivlReviewsApi.Repositories;
+using LivlReviewsApi.Repositories.Interfaces;
 using LivlReviewsApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -54,7 +55,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 
 builder.Services.AddScoped<TokenService, TokenService>();
-builder.Services.AddScoped<IRepository<Product>, EntityRepository<Product>>();
+builder.Services.AddScoped<IPaginatedRepository<Product>, PaginatedEntityRepository<Product>>();
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
