@@ -56,6 +56,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<IPaginatedRepository<Product>, PaginatedEntityRepository<Product>>();
+builder.Services.AddScoped<IRepository<Category>, EntityRepository<Category>>();
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {

@@ -15,5 +15,5 @@ public class Product : ICreatedDate, IUpdatedDate, IDeletedDate
     
     // relations
     public int CategoryId { get; set; }
-    public Category Category { get; set; }
+    public Category Category;
 }

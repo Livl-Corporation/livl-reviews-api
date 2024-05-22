@@ -6,10 +6,10 @@ public class Category
     public string Name { get; set; }
     
     // relations
-    public Category? Parent { get; set; }
     public int? ParentId { get; set; }
-    
-    public List<Category> Children { get; set; }
+    public Category? Parent;
+
+    public List<Category> Children;
 
     public List<Product> Products;
 }

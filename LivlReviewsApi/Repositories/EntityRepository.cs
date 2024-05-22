@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using System.Reflection.PortableExecutable;
 using LivlReviewsApi.Data;
 using LivlReviewsApi.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +26,7 @@ public class EntityRepository<T> : IRepository<T> where T : class
         return DbSet.ToList();
     }
     
-    public List<T> GetBy(Func<T, bool> predicate)
+    public List<T> GetBy(Expression<Func<T, bool>> predicate)
     {
         return DbSet.Where(predicate).ToList();
     }
@@ -63,12 +65,17 @@ public class EntityRepository<T> : IRepository<T> where T : class
         return true;
     }
     
-    public bool DeleteBy(Func<T, bool> predicate)
+    public bool DeleteBy(Expression<Func<T, bool>> predicate)
     {
         DbSet.RemoveRange(DbSet.Where(predicate));
 
         DbContext.SaveChanges();
         
         return true;
+    }
+    
+    public bool Exists(Expression<Func<T, bool>> predicate)
+    {
+        return DbSet.Any(predicate);
     }
 }
