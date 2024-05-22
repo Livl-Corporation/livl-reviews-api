@@ -1,5 +1,6 @@
 using System.Net.Mail;
 using System.Security.Claims;
+using LivlReviewsApi.Attributes;
 using LivlReviewsApi.Data;
 using LivlReviewsApi.Enums;
 using LivlReviewsApi.Repositories.Interfaces;
@@ -29,6 +30,7 @@ public class UsersController : ControllerBase
 
     [Authorize]
     [HttpPost]
+    [UserIdClaim]
     [Route("invite")]
     public async Task<IActionResult> Invite(InviteUserRequest request)
     {
@@ -38,31 +40,26 @@ public class UsersController : ControllerBase
         }
         
         var userName = new MailAddress(request.Email).User;
-        var user = new User { Email = request.Email, Role = Role.User, UserName = userName };
-        var result = await _userManager.CreateAsync(user);
+        var newUser = new User { Email = request.Email, Role = Role.User, UserName = userName };
+        var result = await _userManager.CreateAsync(newUser);
         
-        if (result.Succeeded)
+        if (result.Succeeded is false)
         {
-            var randomToken = Guid.NewGuid().ToString();
-            ClaimsPrincipal currentUser = this.User;
-            var userIdClaim = currentUser.Claims.FirstOrDefault(c => c.Type == "userGUID");
-            if(userIdClaim == null)
-            {
-                return Unauthorized();
-            }
-            
-            var invitationToken = new InvitationToken { Token = randomToken, InvitedById = userIdClaim.Value, InvitedUserId  = user.Id};
-            _invitationTokenRepository.Add(invitationToken);
-            
-            return CreatedAtAction(nameof(Invite), new { email = request.Email, role = Role.User }, request);
+            return Problem("A problem occured while creating the user");
         }
         
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(error.Code, error.Description);
-        }
+        var randomToken = Guid.NewGuid().ToString();
+        var userId = HttpContext.Items["UserId"] as string;
         
-        return BadRequest(ModelState);
+        if(userId is null)
+        {
+            return Unauthorized();
+        }
+            
+        var invitationToken = new InvitationToken { Token = randomToken, InvitedById = userId, InvitedUserId  = newUser.Id};
+        _invitationTokenRepository.Add(invitationToken);
+            
+        return CreatedAtAction(nameof(Invite), new { email = request.Email, role = Role.User }, request);
     }
     
     [HttpPost]
