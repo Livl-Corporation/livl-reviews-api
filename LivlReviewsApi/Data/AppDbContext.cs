@@ -24,7 +24,21 @@ public class AppDbContext : IdentityUserContext<User>
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    {   
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId);
+        
+        modelBuilder.Entity<Category>()
+            .HasMany(c => c.Children)
+            .WithOne(c => c.Parent)
+            .HasForeignKey(c => c.ParentId);
+
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
+                    
         base.OnModelCreating(modelBuilder);
     }
 
@@ -48,5 +62,7 @@ public class AppDbContext : IdentityUserContext<User>
         }
     }
     
+    // entities
     public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
 }

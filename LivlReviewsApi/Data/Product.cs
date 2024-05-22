@@ -12,4 +12,8 @@ public class Product : ICreatedDate, IUpdatedDate, IDeletedDate
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
+    
+    // relations
+    public int CategoryId { get; set; }
+    public Category Category { get; set; }
 }
