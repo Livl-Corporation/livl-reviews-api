@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+using LivlReviews.Email;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
@@ -106,6 +108,11 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
+builder.Services.AddTransient<EmailService>();
+builder.Services.AddTransient<IEmailContentService, EmailContentService>();
 
 var app = builder.Build();
 
