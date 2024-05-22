@@ -116,4 +116,23 @@ public class ProductTests
         // Clean
         repository.DeleteBy(arg => true);
     }
+    
+    [Theory]
+    [MemberData(nameof(ExampleProducts))]
+    public void Add_product(List<Product> products)
+    {
+        // Arrange
+        var factory = new LivlReviewsApiFactory();
+        var context = factory.CreateTestingDbContext();
+        var repository = new EntityRepository<Product>(context);
+        
+        // Act
+        var res = repository.Add(products[0]);
+        
+        // Assert
+        Assert.Equal("Product 1", res.Name);
+        
+        // Clean
+        repository.DeleteBy(arg => true);
+    }
 }
