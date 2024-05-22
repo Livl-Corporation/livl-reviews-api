@@ -1,4 +1,5 @@
 ﻿using LivlReviews.Email;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LivlReviewsApi.Controllers;
 
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 [Route("[controller]")]
 public class EmailController(EmailService emailService) : ControllerBase
 {
+    //[Authorize]
     [HttpPost("send-invitation-email")]
     public async Task<IActionResult> SendInvitationEmail([FromBody] RecipientEmailInvitation[] recipients)
     {

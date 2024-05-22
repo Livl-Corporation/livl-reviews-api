@@ -1,30 +1,19 @@
 ﻿using LivlReviews.Email;
-using Microsoft.Extensions.Options;
 using Moq;
 
-namespace LivlReviewsApiTests;
+namespace LivlReviewsApiTests.Email;
 
 public class EmailServiceTests
 {
+    private readonly Mock<IEmailSender> _emailSenderMock;
     private readonly Mock<IEmailContentService> _emailContentServiceMock;
     private readonly EmailService _emailService;
 
     public EmailServiceTests()
     {
-        Mock<IOptions<SmtpSettings>> smtpSettingsMock = new();
+        _emailSenderMock = new Mock<IEmailSender>();
         _emailContentServiceMock = new Mock<IEmailContentService>();
-
-        smtpSettingsMock.Setup(s => s.Value).Returns(new SmtpSettings
-        {
-            Server = "localhost",
-            Port = 1025,
-            Username = "user",
-            Password = "password",
-            EnableSsl = false,
-            SenderEmail = "noreply@yourapp.com"
-        });
-
-        _emailService = new EmailService(smtpSettingsMock.Object, _emailContentServiceMock.Object);
+        _emailService = new EmailService(_emailSenderMock.Object, _emailContentServiceMock.Object);
     }
 
     [Fact]
@@ -47,5 +36,6 @@ public class EmailServiceTests
 
         // Assert
         _emailContentServiceMock.Verify(s => s.GenerateAccountInvitationContent(recipient.Name, recipient.ActivationLink), Times.Once);
+        _emailSenderMock.Verify(s => s.SendEmailAsync(recipient.Email, "Account Invitation", "Email content"), Times.Once);
     }
 }

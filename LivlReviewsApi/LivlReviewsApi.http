@@ -3,7 +3,4 @@
 GET {{LivlReviewsApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
-GET {{LivlReviewsApi_HostAddress}}/send-invitation-email
-Accept: application/json
-
 ###
