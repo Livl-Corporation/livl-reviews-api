@@ -110,6 +110,7 @@ builder.Services.AddAuthentication(options =>
 
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<IEmailContentService, EmailContentService>();
 

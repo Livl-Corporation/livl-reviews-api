@@ -4,14 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace LivlReviews.Email;
 
-public class SmtpEmailSender : IEmailSender
+public class SmtpEmailSender(IOptions<SmtpSettings> smtpSettings) : IEmailSender
 {
-    private readonly SmtpSettings _smtpSettings;
-
-    public SmtpEmailSender(IOptions<SmtpSettings> smtpSettings)
-    {
-        _smtpSettings = smtpSettings.Value;
-    }
+    private readonly SmtpSettings _smtpSettings = smtpSettings.Value;
 
     public async Task SendEmailAsync(string email, string subject, string message)
     {
