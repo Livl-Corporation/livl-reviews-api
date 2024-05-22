@@ -1,14 +1,12 @@
 using LivlReviewsApi.Data;
 
-namespace LivlReviewsApi.Repositories;
+namespace LivlReviewsApi.Repositories.Interfaces;
 
 public interface IRepository<T> where T : class
 {
     T GetById(int id);
     List<T> GetAll();
     List<T> GetBy(Func<T, bool> predicate);
-    PaginatedResult<T> GetPaginated(PaginationParameters paginationParameters);
-    PaginatedResult<T> GetPaginated(Func<T, bool> predicate, PaginationParameters paginationParameters);
     T Add(T entity);
     void AddRange(List<T> entities);
     T Update(T entity);

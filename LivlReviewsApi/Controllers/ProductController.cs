@@ -1,5 +1,6 @@
 using LivlReviewsApi.Data;
 using LivlReviewsApi.Repositories;
+using LivlReviewsApi.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,9 @@ namespace LivlReviewsApi.Controllers ;
 [Route("/api/[controller]")]
 public class ProductController : ControllerBase
 {
-    private readonly IRepository<Product> repository;
+    private readonly IPaginatedRepository<Product> repository;
     
-    public ProductController(IRepository<Product> repository)
+    public ProductController(IPaginatedRepository<Product> repository)
     {
         this.repository = repository;
     }

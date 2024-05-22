@@ -1,12 +1,13 @@
 using LivlReviewsApi.Data;
+using LivlReviewsApi.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LivlReviewsApi.Repositories;
 
 public class EntityRepository<T> : IRepository<T> where T : class
 {
-    private readonly AppDbContext DbContext;
-    private readonly DbSet<T> DbSet;
+    protected readonly AppDbContext DbContext;
+    protected readonly DbSet<T> DbSet;
     
     public EntityRepository(AppDbContext dbContext)
     {
@@ -26,33 +27,6 @@ public class EntityRepository<T> : IRepository<T> where T : class
     public List<T> GetBy(Func<T, bool> predicate)
     {
         return DbSet.Where(predicate).ToList();
-    }
-
-    public PaginatedResult<T> GetPaginated(Func<T, bool> predicate , PaginationParameters paginationParameters)
-    {
-        int total = DbSet.Count(predicate);
-        int totalPages = (int)Math.Ceiling((double)total / paginationParameters.pageSize);
-        List<T> results = DbSet.Where(predicate)
-            .Skip((paginationParameters.page - 1) * paginationParameters.pageSize)
-            .Take(paginationParameters.pageSize)
-            .ToList();
-
-        return new PaginatedResult<T>
-        {
-            Results = results,
-            Metadata = new PaginationMetadata
-            {
-                page = paginationParameters.page,
-                pageSize = paginationParameters.pageSize,
-                total = total,
-                totalPages = totalPages
-            }
-        };
-    }
-
-    public PaginatedResult<T> GetPaginated(PaginationParameters paginationParameters)
-    {
-        return GetPaginated(arg => true, paginationParameters);
     }
     
     public T Add(T entity)

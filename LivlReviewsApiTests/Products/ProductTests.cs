@@ -52,7 +52,7 @@ public class ProductTests
         // Arrange
         var factory = new LivlReviewsApiFactory();
         var context = factory.CreateTestingDbContext();
-        var repository = new EntityRepository<Product>(context);
+        var repository = new PaginatedEntityRepository<Product>(context);
         
         repository.AddRange(products);        
         
@@ -73,7 +73,7 @@ public class ProductTests
         // Arrange
         var factory = new LivlReviewsApiFactory();
         var context = factory.CreateTestingDbContext();
-        var repository = new EntityRepository<Product>(context);
+        var repository = new PaginatedEntityRepository<Product>(context);
 
         repository.AddRange(products);
         
@@ -102,7 +102,7 @@ public class ProductTests
         // Arrange
         var factory = new LivlReviewsApiFactory();
         var context = factory.CreateTestingDbContext();
-        var repository = new EntityRepository<Product>(context);
+        var repository = new PaginatedEntityRepository<Product>(context);
 
         repository.AddRange(products);
         
@@ -124,7 +124,7 @@ public class ProductTests
         // Arrange
         var factory = new LivlReviewsApiFactory();
         var context = factory.CreateTestingDbContext();
-        var repository = new EntityRepository<Product>(context);
+        var repository = new PaginatedEntityRepository<Product>(context);
         
         // Act
         var res = repository.Add(products[0]);
