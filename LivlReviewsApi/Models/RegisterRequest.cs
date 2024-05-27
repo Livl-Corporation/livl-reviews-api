@@ -6,7 +6,7 @@ namespace LivlReviewsApi.Data;
 public class RegisterRequest
 {
     [Required]
-    public string? Email { get; set; }
+    public string? Token { get; set; }
     
     [Required]
     public string? Password { get; set; }

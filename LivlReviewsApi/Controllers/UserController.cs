@@ -39,6 +39,29 @@ public class UsersController : ControllerBase
             return BadRequest("Email is required");
         }
         
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null)
+        {
+            return Unauthorized();
+        }
+        var currentUser = await _userManager.FindByIdAsync(currentUserId);
+        if (currentUser is null)
+        {
+            return Unauthorized();
+        }
+        
+        var isCurrentUserAdmin = currentUser.Role == Role.Admin;
+        if(isCurrentUserAdmin is false)
+        {
+            return Unauthorized();
+        }
+        
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user is not null)
+        {
+            return BadRequest("User already exists");
+        }
+        
         var userName = new MailAddress(request.Email).User;
         var newUser = new User { Email = request.Email, Role = Role.User, UserName = userName };
         var result = await _userManager.CreateAsync(newUser);
@@ -49,14 +72,8 @@ public class UsersController : ControllerBase
         }
         
         var randomToken = Guid.NewGuid().ToString();
-        var userId = HttpContext.Items["UserId"] as string;
-        
-        if(userId is null)
-        {
-            return Unauthorized();
-        }
             
-        var invitationToken = new InvitationToken { Token = randomToken, InvitedById = userId, InvitedUserId  = newUser.Id};
+        var invitationToken = new InvitationToken { Token = randomToken, InvitedById = currentUserId, InvitedUserId  = newUser.Id};
         _invitationTokenRepository.Add(invitationToken);
             
         return CreatedAtAction(nameof(Invite), new { email = request.Email, role = Role.User }, request);
@@ -70,31 +87,39 @@ public class UsersController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-        
-        if(request.Email is null || request.Password is null)
+
+        // Check if token is valid
+        var invitationToken = _invitationTokenRepository.GetBy(token => 
+            token.Token == request.Token).First();
+
+        if (invitationToken is null)
         {
-            return BadRequest("Email and password are required");
+            return Unauthorized("Invalid token");
         }
         
-        string userName = new MailAddress(request.Email).User;
+        // Update existing user by adding it's password
+        var user = await _userManager.FindByIdAsync(invitationToken.InvitedUserId);
+        if (user is null)
+        {
+            return BadRequest("User not found");
+        }
         
-        var result = await _userManager.CreateAsync(
-            new User { Email = request.Email, UserName = userName, Role = Role.User },
-            request.Password!
-        );
-
-        if (result.Succeeded)
+        var addPasswordResult = await _userManager.AddPasswordAsync(user, request.Password);
+        if (addPasswordResult.Succeeded is false)
         {
-            request.Password = "";
-            return CreatedAtAction(nameof(Register), new { email = request.Email, role = Role.User }, request);
+            return Problem("A problem occured while updating the user");
         }
-
-        foreach (var error in result.Errors)
+        
+        user.EmailConfirmed = true;
+        var updateEmailConfirmedResult = await _userManager.UpdateAsync(user);
+        if (updateEmailConfirmedResult.Succeeded is false)
         {
-            ModelState.AddModelError(error.Code, error.Description);
+            return Problem("A problem occured while updating the user");
         }
+        
+        _invitationTokenRepository.Delete(invitationToken);
 
-        return BadRequest(ModelState);
+        return Ok("User creation successfully confirmed. Good job my team!");
     }
     
     [HttpPost]
@@ -110,6 +135,12 @@ public class UsersController : ControllerBase
         if (managedUser == null)
         {
             return BadRequest("Bad credentials");
+        }
+        
+        var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(managedUser);
+        if (!isEmailConfirmed)
+        {
+            return Unauthorized("Email not confirmed");
         }
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password!);
