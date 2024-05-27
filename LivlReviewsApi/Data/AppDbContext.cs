@@ -1,4 +1,7 @@
+using System.Net.Mail;
 using LivlReviewsApi.Data.Interfaces;
+using LivlReviewsApi.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -8,11 +11,12 @@ namespace LivlReviewsApi.Data;
 
 public class AppDbContext : IdentityUserContext<User>
 {
+    protected readonly IConfiguration Configuration;
     
-    public AppDbContext (DbContextOptions<AppDbContext> options)
+    public AppDbContext (DbContextOptions<AppDbContext> options, IConfiguration configuration)
         : base(options)
     {
-        
+        Configuration = configuration;
     }
 
     public override int SaveChanges()
@@ -26,6 +30,17 @@ public class AppDbContext : IdentityUserContext<User>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        // SHould work but it's not
+        var defaultAdminEmail = Configuration.GetSection("SiteSettings:AdminEmail").Value;
+        var userName = new MailAddress(defaultAdminEmail!).User;
+        var defaultAdminPassword = Configuration.GetSection("SiteSettings:AdminPassword").Value;
+        var defaultUser = new User { Email = defaultAdminEmail, UserName = userName, Role = Role.Admin };
+
+        PasswordHasher<User> ph = new PasswordHasher<User>();
+        defaultUser.PasswordHash = ph.HashPassword(defaultUser, defaultAdminPassword!);
+        
+        modelBuilder.Entity<User>().HasData(defaultUser);
     }
     
     private void SetCreatedAtProperty()

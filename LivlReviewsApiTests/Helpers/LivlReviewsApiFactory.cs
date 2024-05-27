@@ -20,7 +20,7 @@ public class LivlReviewsApiFactory : WebApplicationFactory<IApiAssemblyMarker>
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(databaseName: "livlTestDatabase")
             .Options;
-        var dbContext = new AppDbContext(options);
+        var dbContext = new AppDbContext(options, null);
         dbContext.Database.EnsureCreated();
         return dbContext;
     }
