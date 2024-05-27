@@ -14,16 +14,6 @@ using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using User = LivlReviews.Infra.Data.User;
 
-Guid guid1 = Guid.NewGuid();
-Guid guid2 = Guid.NewGuid();
-Guid guid3 = Guid.NewGuid();
-
-Console.WriteLine(guid1.ToString().ToUpper());
-Console.WriteLine(guid2.ToString().ToUpper());
-Console.WriteLine(guid3.ToString().ToUpper());
-
-return;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
