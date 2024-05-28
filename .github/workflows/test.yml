@@ -18,11 +18,11 @@ jobs:
         dotnet-version: 8.0.104
 
     - name: Install dependencies
-      run: dotnet restore ./LivlReviewsApi && dotnet restore ./LivlReviewsApiTests
+      run: dotnet restore
 
     - name: Build
-      run: dotnet build ./LivlReviewsApi --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test ./LivlReviewsApiTests/ --no-restore --verbosity normal
+      run: dotnet test --no-restore --verbosity normal
 
