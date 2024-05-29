@@ -1,6 +1,8 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Test.Spies;
+using LivlReviews.Domain.Test.Stubs;
+using LivlReviews.Domain.Users;
 using Xunit;
 
 namespace LivlReviews.Domain.Test;
@@ -12,31 +14,33 @@ public class InvitationTests
     {
         // Arrange
         SpyInvitationDelivery invitationDelivery = new SpyInvitationDelivery();
+        User user = new User { Role = Role.Admin, Email = "admin@email.com", Id = "1"};
+        IUserInventory userInventory = new StubUserInventory(user);
         
-        IInvitationSender invitationSender = new InvitationSender(invitationDelivery);
-        User sender = new User { Id = "1", Email = "sender@email.com", Role = Role.Admin };
+        IInvitationSender invitationSender = new InvitationSender(invitationDelivery, userInventory);
         
         // Act
-        invitationSender.SendInvitation(sender, "invitedUser@email.com");
+        invitationSender.SendInvitation("1", "invitedUser@email.com");
         
         // Assert
        Assert.True(invitationDelivery.IsDeliverInvitationCalled);
     }
 
     [Fact]
-    public void Should_Throw_Exception_When_Sender_Is_Not_Admin()
+    public async void Should_Throw_Exception_When_Sender_Is_Not_Admin()
     {
         // Arrange
         SpyInvitationDelivery invitationDelivery = new SpyInvitationDelivery();
+        User user = new User { Role = Role.User, Email = "user@email.com", Id = "1"};
+        IUserInventory userInventory = new StubUserInventory(user);
 
-        IInvitationSender invitationSender = new InvitationSender(invitationDelivery);
-        User sender = new User { Id = "1", Email = "sender@email.com", Role = Role.User };
+        IInvitationSender invitationSender = new InvitationSender(invitationDelivery, userInventory);
 
         // Act
-        void Act() => invitationSender.SendInvitation(sender, "invitedUser@email.com");
+        Task Act () => invitationSender.SendInvitation("2", "invitedUser@email.com");
 
         // Assert
-        Assert.Throws<Exception>(Act);
+        await Assert.ThrowsAsync<Exception>(Act);
         Assert.False(invitationDelivery.IsDeliverInvitationCalled);
     }
 

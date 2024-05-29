@@ -6,8 +6,8 @@ public class SpyInvitationDelivery : IInvitationDelivery
 {
 
     public bool IsDeliverInvitationCalled { get; private set; } = false;
-    
-    public void DeliverInvitation(User sender, User invitedUser)
+
+    public void DeliverInvitation(string senderUsierId, User invitedUser)
     {
         IsDeliverInvitationCalled = true;
     }

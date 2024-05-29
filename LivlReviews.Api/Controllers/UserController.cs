@@ -1,11 +1,16 @@
 using System.Net.Mail;
+using LivlReviews.Api.Attributes;
 using LivlReviews.Api.Models;
 using LivlReviews.Api.Services;
+using LivlReviews.Domain;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using LivlReviews.Infra.Data;
+using LivlReviews.Infra.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LivlReviews.Api.Controllers;
 
@@ -16,26 +21,34 @@ public class UsersController : ControllerBase
     private readonly UserManager<User> _userManager;
     private readonly AppDbContext _context;
     private readonly TokenService _tokenService;
+    private readonly IRepository<InvitationToken> _invitationTokenRepository;
 
-    public UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger)
+    public UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository)
     {
         _userManager = userManager;
         _context = context;
         _tokenService = tokenService;
+        _invitationTokenRepository = invitationTokenRepository;
     }
 
     [HttpPost]
     [Route("invite")]
+    [Authorize]
+    [UserIdClaim]
     public async Task<IActionResult> Invite(InviteRequest request)
     {
-        if(request.Email is null)
-        {
-            return BadRequest("Email is required");
-        }
+        if(request.Email is null) return BadRequest("Email is required");
+        
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
 
         try
         {
-            
+            IInvitationSender invitationSender = new InvitationSender(
+                new InvitationDelivery(_userManager, _invitationTokenRepository),
+                new UserInventory(_userManager)
+            );
+            await invitationSender.SendInvitation(currentUserId, request.Email);
         } catch (Exception e)
         {
             return BadRequest(e.Message);

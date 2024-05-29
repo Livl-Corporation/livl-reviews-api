@@ -12,7 +12,7 @@ public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<
     public UserManager<Data.User> UserManager = userManager;
     public IRepository<InvitationToken> InvitationTokenRepository = invitationTokenRepository;
     
-    public async void DeliverInvitation(User sender, User invitedUser)
+    public async void DeliverInvitation(string senderUserId, User invitedUser)
     {
         var invitedUserResult = await UserManager.CreateAsync(MapUser(invitedUser));
         
@@ -27,7 +27,7 @@ public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<
         var invitationToken = new InvitationToken
         {
             Token = randomToken,
-            InvitedByUderId = sender.Id,
+            InvitedByUderId = senderUserId,
             InvitedUserId = invitedUser.Id,
         };
         

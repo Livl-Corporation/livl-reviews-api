@@ -4,5 +4,5 @@ namespace LivlReviews.Domain;
 
 public interface IInvitationSender
 {
-    public void SendInvitation(User sender, string email);
+    public Task SendInvitation(string senderUserId, string email);
 }
