@@ -23,6 +23,26 @@ public class UsersController : ControllerBase
         _context = context;
         _tokenService = tokenService;
     }
+
+    [HttpPost]
+    [Route("invite")]
+    public async Task<IActionResult> Invite(InviteRequest request)
+    {
+        if(request.Email is null)
+        {
+            return BadRequest("Email is required");
+        }
+
+        try
+        {
+            
+        } catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+
+        return Ok();
+    }
     
     [HttpPost]
     [Route("register")]

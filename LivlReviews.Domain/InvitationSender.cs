@@ -13,8 +13,10 @@ public class InvitationSender(IInvitationDelivery invitationDelivery) : IInvitat
         {
             throw new Exception("Only admins can send invitations");
         }
+        
+        User invitedUser = new User { Email = email, Role = Role.User};
 
-        InvitationDelivery.DeliverInvitation(sender, email);
+        InvitationDelivery.DeliverInvitation(sender, invitedUser);
     }
 
 }
