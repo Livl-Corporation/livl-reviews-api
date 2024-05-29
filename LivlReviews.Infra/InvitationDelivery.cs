@@ -9,12 +9,12 @@ namespace LivlReviews.Infra;
 
 public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<InvitationToken> invitationTokenRepository) : IInvitationDelivery
 {
-    public UserManager<Data.User> UserManager = userManager;
-    public IRepository<InvitationToken> InvitationTokenRepository = invitationTokenRepository;
+    private readonly UserManager<Data.User> _userManager = userManager;
+    private readonly IRepository<InvitationToken> _invitationTokenRepository = invitationTokenRepository;
     
     public async void DeliverInvitation(string senderUserId, User invitedUser)
     {
-        var invitedUserResult = await UserManager.CreateAsync(MapUser(invitedUser));
+        var invitedUserResult = await _userManager.CreateAsync(MapUser(invitedUser));
         
         if(!invitedUserResult.Succeeded)
         {
@@ -31,7 +31,7 @@ public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<
             InvitedUserId = invitedUser.Id,
         };
         
-        InvitationTokenRepository.Add(invitationToken);
+        _invitationTokenRepository.Add(invitationToken);
     }
     
     private Data.User MapUser(User user)
