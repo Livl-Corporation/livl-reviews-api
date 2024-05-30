@@ -1,4 +1,5 @@
 using LivlReviews.Domain.Entities.Interfaces;
+using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain.Entities;
 
@@ -16,4 +17,16 @@ public class Product : ICreatedDate, IUpdatedDate, IDeletedDate
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
+
+    public static bool Can(Role role, Operation operation)
+    {
+        switch (operation)
+        {
+            case Operation.READ:
+                return role >= Role.User;
+            
+            default:
+                return role >= Role.Admin;
+        }
+    }
 }
