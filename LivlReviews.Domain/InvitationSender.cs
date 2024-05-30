@@ -20,7 +20,7 @@ public class InvitationSender(IInvitationDelivery invitationDelivery, IUserInven
         
         User invitedUser = new User { Email = email, Role = Role.User};
         
-        _invitationDelivery.DeliverInvitation(senderUserId, invitedUser);
+        await _invitationDelivery.DeliverInvitation(senderUserId, invitedUser);
     }
 
 }
