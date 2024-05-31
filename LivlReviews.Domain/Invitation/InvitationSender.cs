@@ -2,7 +2,7 @@ using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Users;
 
-namespace LivlReviews.Domain;
+namespace LivlReviews.Domain.Invitation;
 
 public class InvitationSender(IInvitationDelivery invitationDelivery, IUserInventory userInventory) : IInvitationSender
 {

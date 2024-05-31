@@ -1,11 +1,12 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Invitation;
 using LivlReviews.Domain.Test.Spies;
 using LivlReviews.Domain.Test.Stubs;
 using LivlReviews.Domain.Users;
 using Xunit;
 
-namespace LivlReviews.Domain.Test;
+namespace LivlReviews.Domain.Test.Invitations;
 
 public class InvitationTests
 {

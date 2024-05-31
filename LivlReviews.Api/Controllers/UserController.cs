@@ -4,6 +4,7 @@ using LivlReviews.Api.Models;
 using LivlReviews.Api.Services;
 using LivlReviews.Domain;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Invitation;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using Microsoft.AspNetCore.Identity;

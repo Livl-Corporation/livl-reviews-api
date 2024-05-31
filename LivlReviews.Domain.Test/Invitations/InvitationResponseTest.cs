@@ -5,7 +5,7 @@ using LivlReviews.Domain.Test.Stubs;
 using LivlReviews.Domain.Users;
 using Xunit;
 
-namespace LivlReviews.Domain.Test;
+namespace LivlReviews.Domain.Test.Invitations;
 
 public class InvitationResponseTest
 {
@@ -39,14 +39,17 @@ public class InvitationResponseTest
     public async void Should_Not_Accept_User_Confirmation_When_TokenId_Is_Incorrect()
     {
         // Arrange
-        List<InvitationToken> tokenList = new List<InvitationToken>();
-        tokenList.Add(new InvitationToken
-        {
-            Token = "invitationToken",
-            InvitedUserId = "invitedUserId",
-            InvitedByUserId = "invitedByUserId",
-            Id = 0
-        });
+        List<InvitationToken> tokenList =
+        [
+            new InvitationToken
+            {
+                Token = "invitationToken",
+                InvitedUserId = "invitedUserId",
+                InvitedByUserId = "invitedByUserId",
+                Id = 0
+            }
+
+        ];
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory(tokenList);
         User user = new User { Role = Role.User, Email = "admin@email.com", Id = "1", isConfirmed = false};
         StubUserInventory userInventory = new StubUserInventory(user);
