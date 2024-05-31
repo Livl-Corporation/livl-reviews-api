@@ -123,6 +123,8 @@ public class UsersController : ControllerBase
             return BadRequest("Bad credentials");
         }
 
+        if (managedUser.EmailConfirmed is false) return BadRequest("Bad credentials");
+
         var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password!);
         if (!isPasswordValid)
         {
