@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace LivlReviews.Api.Controllers;
 
@@ -37,7 +38,7 @@ public class UsersController : ControllerBase
     [UserIdClaim]
     public async Task<IActionResult> Invite(InviteRequest request)
     {
-        if(request.Email is null) return BadRequest("Email is required");
+        if(String.IsNullOrEmpty(request.Email)) return BadRequest("Email is required");
         
         var currentUserId = HttpContext.Items["UserId"] as string;
         if(currentUserId is null) return Unauthorized();
@@ -61,8 +62,8 @@ public class UsersController : ControllerBase
     [Route("confirmInvitation")]
     public async Task<IActionResult> ConfirmInvitation(ConfirmInvitationRequest request)
     {
-        if (request.Token is null) return BadRequest("Token is required");
-        if (request.Password is null) return BadRequest("Password is required");
+        if (String.IsNullOrEmpty(request.Token)) return BadRequest("Token is required");
+        if (String.IsNullOrEmpty(request.Password)) return BadRequest("Password is required");
 
         try
         {
@@ -76,7 +77,6 @@ public class UsersController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
             return BadRequest(e);
         }
     }
@@ -86,15 +86,8 @@ public class UsersController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        
-        if(request.Email is null || request.Password is null)
-        {
-            return BadRequest("Email and password are required");
-        }
+        if (String.IsNullOrEmpty(request.Email)) return BadRequest("Email is required");
+        if (String.IsNullOrEmpty(request.Password)) return BadRequest("Password is required");
         
         string userName = new MailAddress(request.Email).User;
         
@@ -121,10 +114,8 @@ public class UsersController : ControllerBase
     [Route("login")]
     public async Task<ActionResult<LoginResponse>> Authenticate([FromBody] LoginRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+        if (String.IsNullOrEmpty(request.Email)) return BadRequest("Email is required");
+        if (String.IsNullOrEmpty(request.Password)) return BadRequest("Password is required");
 
         var managedUser = await _userManager.FindByEmailAsync(request.Email!);
         if (managedUser == null)
