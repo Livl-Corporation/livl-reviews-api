@@ -1,3 +1,4 @@
+using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 
@@ -6,6 +7,7 @@ namespace LivlReviews.Infra.Data;
 public class User : IdentityUser
 {
     public Role Role { get; set; }
+    public ICollection<UserProduct> UserProducts { get; set; }
     
     public Domain.Entities.User ToDomainUser()
     {
@@ -13,7 +15,8 @@ public class User : IdentityUser
         {
             Id = Id,
             Email = Email,
-            Role = Role
+            Role = Role,
+            UserProducts = UserProducts
         };
     }
 }

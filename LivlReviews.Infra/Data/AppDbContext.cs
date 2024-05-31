@@ -8,6 +8,8 @@ namespace LivlReviews.Infra.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUserContext<User>(options)
 {
+    public DbSet<Product> Products { get; set; }
+    public DbSet<UserProduct> UserProducts { get; set; }
     public override int SaveChanges()
     {
         SetCreatedAtProperty();
@@ -19,6 +21,20 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        // UserProduct
+        modelBuilder.Entity<UserProduct>()
+            .HasKey(up => new { up.ProductId, up.UserId });
+
+        modelBuilder.Entity<UserProduct>()
+            .HasOne(up => up.Product)
+            .WithMany(p => p.UserProducts)
+            .HasForeignKey(up => up.ProductId);
+
+        modelBuilder.Entity<UserProduct>()
+            .HasOne(up => up.User)
+            .WithMany(u => u.UserProducts)
+            .HasForeignKey(up => up.UserId);
     }
 
     private void SetCreatedAtProperty()
