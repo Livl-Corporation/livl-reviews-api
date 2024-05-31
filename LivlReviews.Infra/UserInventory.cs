@@ -20,4 +20,9 @@ public class UserInventory (UserManager<Data.User> userManager) : IUserInventory
         
         return new User { Id = userResult.Id, Email = userResult.Email ?? string.Empty, Role = userResult.Role};
     }
+
+    public Task<User> ValidateUser(string userId, string password)
+    {
+        throw new NotImplementedException();
+    }
 }

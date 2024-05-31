@@ -6,9 +6,16 @@ namespace LivlReviews.Domain.Test.Stubs;
 
 public class StubUserInventory(User user) : IUserInventory
 {
-    private readonly User _user = user;
+    public bool IsValidateUserCalled = false;
+    
     public Task<User> GetUserById(string userId)
     {
-        return Task.FromResult(_user);
+        return Task.FromResult(user);
+    }
+
+    public Task<User> ValidateUser(string userId, string password)
+    {
+        IsValidateUserCalled = true;
+        return Task.FromResult(user with {isConfirmed = true});
     }
 }
