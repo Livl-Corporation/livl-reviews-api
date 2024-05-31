@@ -9,8 +9,6 @@ namespace LivlReviews.Infra;
 
 public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<InvitationToken> invitationTokenRepository) : IInvitationDelivery
 {
-    private readonly UserManager<Data.User> _userManager = userManager;
-    private readonly IRepository<InvitationToken> _invitationTokenRepository = invitationTokenRepository;
     
     public async Task DeliverInvitation(string senderUserId, User invitedUser)
     {
@@ -20,14 +18,13 @@ public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<
             UserName = new MailAddress(invitedUser.Email).User,
             Role = invitedUser.Role,
         };
-        var userResult = await _userManager.CreateAsync(newUser);
+        var userResult = await userManager.CreateAsync(newUser);
         
         if(!userResult.Succeeded)
         {
             throw new Exception("Could not create user");
         }
         
-        // Maybe this should be generated in the domain... Let's see later :)
         var randomToken = Guid.NewGuid().ToString();
         var invitationToken = new InvitationToken
         {
@@ -36,6 +33,8 @@ public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<
             InvitedUserId = newUser.Id,
         };
         
-        _invitationTokenRepository.Add(invitationToken);
+        invitationTokenRepository.Add(invitationToken);
+        
+        // TODO : We should send the email from there too :)
     }
 }
