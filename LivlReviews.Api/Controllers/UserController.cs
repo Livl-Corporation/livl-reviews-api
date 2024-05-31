@@ -56,6 +56,31 @@ public class UsersController : ControllerBase
 
         return Ok();
     }
+
+    [HttpPost]
+    [Route("confirmInvitation")]
+    public async Task<IActionResult> ConfirmInvitation(ConfirmInvitationRequest request)
+    {
+        if (request.Token is null) return BadRequest("Token is required");
+        if (request.Password is null) return BadRequest("Password is required");
+
+        try
+        {
+            IInvitationConfirmator invitationConfirmator = new InvitationConfirmator(
+                new InvitationTokenInventory(_invitationTokenRepository),
+                new UserInventory(_userManager)
+            );
+            await invitationConfirmator.ConfirmUser(request.Token, request.Password);
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e);
+        }
+    }
+    
     
     [HttpPost]
     [Route("register")]
