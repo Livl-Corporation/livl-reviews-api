@@ -8,6 +8,7 @@ public class User : IdentityUser
 {
     public Role Role { get; set; }
     public ICollection<UserProduct> UserProducts { get; set; }
+    public ICollection<ProductRequest> ProductRequests { get; set; }
     
     public Domain.Entities.User ToDomainUser()
     {
@@ -16,7 +17,8 @@ public class User : IdentityUser
             Id = Id,
             Email = Email,
             Role = Role,
-            UserProducts = UserProducts
+            UserProducts = UserProducts,
+            ProductRequests = ProductRequests
         };
     }
 }

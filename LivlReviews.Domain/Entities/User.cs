@@ -8,4 +8,5 @@ public class User
     public string Email { get; set; }
     public Role Role { get; set; }
     public ICollection<UserProduct> UserProducts { get; set; } = new List<UserProduct>();
+    public ICollection<ProductRequest> ProductRequests { get; set; } = new List<ProductRequest>();
 }

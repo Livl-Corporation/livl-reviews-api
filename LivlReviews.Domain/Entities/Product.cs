@@ -13,4 +13,5 @@ public class Product : ICreatedDate, IUpdatedDate, IDeletedDate
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
     public ICollection<UserProduct> UserProducts { get; set; } = new List<UserProduct>();
+    public ICollection<ProductRequest> ProductRequests { get; set; } = new List<ProductRequest>();
 }

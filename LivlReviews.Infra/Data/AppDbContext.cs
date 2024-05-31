@@ -10,6 +10,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
 {
     public DbSet<Product> Products { get; set; }
     public DbSet<UserProduct> UserProducts { get; set; }
+    public DbSet<ProductRequest> ProductRequests { get; set; }
+    
     public override int SaveChanges()
     {
         SetCreatedAtProperty();
@@ -35,6 +37,20 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .HasOne(up => up.User)
             .WithMany(u => u.UserProducts)
             .HasForeignKey(up => up.UserId);
+        
+        // ProductRequest
+        modelBuilder.Entity<ProductRequest>()
+            .HasKey(pr => pr.Id);
+
+        modelBuilder.Entity<ProductRequest>()
+            .HasOne(pr => pr.User)
+            .WithMany(u => u.ProductRequests)
+            .HasForeignKey(pr => pr.UserId);
+
+        modelBuilder.Entity<ProductRequest>()
+            .HasOne(pr => pr.Product)
+            .WithMany(p => p.ProductRequests)
+            .HasForeignKey(pr => pr.ProductId);
     }
 
     private void SetCreatedAtProperty()
@@ -56,6 +72,4 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             ((IUpdatedDate) entry.Entity).UpdatedAt = DateTime.Now;
         }
     }
-    
-    public DbSet<Product> Products { get; set; }
 }
