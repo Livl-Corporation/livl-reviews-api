@@ -61,9 +61,9 @@ public class CategoriesController(IRepository<Category> categoriesRepository, Us
             return Forbid();
         }
         
-        categoriesRepository.Update(category);
+        Category res = categoriesRepository.Update(category);
 
-        return NoContent();
+        return Ok(res);
     }
 
     [HttpDelete("{id}")]
