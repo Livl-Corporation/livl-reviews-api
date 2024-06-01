@@ -18,21 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Product>()
-            .HasOne(p => p.Category)
-            .WithMany(c => c.Products)
-            .HasForeignKey(p => p.CategoryId)
-            .OnDelete(DeleteBehavior.SetNull);
-        
-        modelBuilder.Entity<Category>()
-            .HasMany(c => c.Children)
-            .WithOne(c => c.Parent)
-            .HasForeignKey(c => c.ParentId)
-            .OnDelete(DeleteBehavior.SetNull);
-        
-        modelBuilder.Entity<Category>()
-            .HasIndex(c => c.Name)
-            .IsUnique();
+        this.DefineRequiredProperties(modelBuilder);
+        this.CreateRelationships(modelBuilder);
         
         base.OnModelCreating(modelBuilder);
     }
@@ -55,6 +42,50 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
         {
             ((IUpdatedDate) entry.Entity).UpdatedAt = DateTime.Now;
         }
+    }
+    
+    private void CreateRelationships(ModelBuilder modelBuilder)
+    {        
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<Category>()
+            .HasMany(c => c.Children)
+            .WithOne(c => c.Parent)
+            .HasForeignKey(c => c.ParentId)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
+    }
+    
+    private void DefineRequiredProperties(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.Property(e => e.Id).IsRequired(false);
+            entity.Property(e => e.Name).IsRequired(true);
+            entity.Property(e => e.Image).IsRequired(true);
+            entity.Property(e => e.URL).IsRequired(true);
+            entity.Property(e => e.VinerURL).IsRequired(true);
+            entity.Property(e => e.CategoryId).IsRequired(true);
+            entity.Property(e => e.CreatedAt).IsRequired(false);
+            entity.Property(e => e.UpdatedAt).IsRequired(false);
+            entity.Property(e => e.DeletedAt).IsRequired(false);
+        });
+
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.Property(e => e.Id).IsRequired(false);
+            entity.Property(e => e.Name).IsRequired(true);
+            entity.Property(e => e.ParentId).IsRequired(false);
+            entity.Property(e => e.Products).IsRequired(false);
+            entity.Property(e => e.Children).IsRequired(false);
+        });
     }
     
     public DbSet<Product> Products { get; set; }

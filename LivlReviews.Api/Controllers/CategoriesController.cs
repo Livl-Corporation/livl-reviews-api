@@ -1,33 +1,28 @@
 using LivlReviews.Domain.Entities;
+using LivlReviews.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Api.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class CategoriesController : ControllerBase
+public class CategoriesController(IRepository<Category> categoriesRepository, UserManager<User> userManager) : ControllerBase
 {
-    private readonly IRepository<Category> _repository;
-
-    public CategoriesController(IRepository<Category> repository)
-    {
-        _repository = repository;
-    }
-
     [HttpGet]
     public ActionResult<IEnumerable<Category>> GetAllCategories()
     {
-        return Ok(_repository.GetAll());
+        return Ok(categoriesRepository.GetAll());
     }
 
-    // GET: api/Categories/5
     [HttpGet("{id}")]
     public ActionResult<Category> GetCategory(int id)
     {
-        var category = _repository.GetById(id);
+        var category = categoriesRepository.GetById(id);
 
         if (category == null)
         {
@@ -40,7 +35,14 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public ActionResult<Category> CreateCategory(Category category)
     {
-        var createdCategory = _repository.Add(category);
+        Domain.Entities.User user = userManager.FindByNameAsync(User.Identity.Name).Result.ToDomainUser();
+        
+        if (!Category.Can(user.Role, Operation.CREATE))
+        {
+            return Forbid();
+        }
+        
+        var createdCategory = categoriesRepository.Add(category);
         return CreatedAtAction(nameof(GetCategory), new { id = createdCategory.Id }, createdCategory);
     }
 
@@ -52,9 +54,14 @@ public class CategoriesController : ControllerBase
             return BadRequest();
         }
         
-        // TODO : check if user is allowed to update category
-
-        _repository.Update(category);
+        Domain.Entities.User user = userManager.FindByNameAsync(User.Identity.Name).Result.ToDomainUser();
+        
+        if (!Category.Can(user.Role, Operation.UPDATE))
+        {
+            return Forbid();
+        }
+        
+        categoriesRepository.Update(category);
 
         return NoContent();
     }
@@ -62,13 +69,20 @@ public class CategoriesController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeleteCategory(int id)
     {
-        var category = _repository.GetById(id);
+        Domain.Entities.User user = userManager.FindByNameAsync(User.Identity.Name).Result.ToDomainUser();
+    
+        if (!Category.Can(user.Role, Operation.DELETE))
+        {
+            return Forbid();
+        }
+        
+        var category = categoriesRepository.GetById(id);
         if (category == null)
         {
             return NotFound();
         }
 
-        _repository.Delete(category);
+        categoriesRepository.Delete(category);
 
         return NoContent();
     }
