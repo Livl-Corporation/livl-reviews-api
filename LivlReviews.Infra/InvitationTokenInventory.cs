@@ -26,4 +26,20 @@ public class InvitationTokenInventory(IRepository<Data.InvitationToken> invitati
             CreatedAt = result.CreatedAt
         };
     }
+
+    public Task<List<InvitationToken>> GetTokensByAdminId(string adminId)
+    {
+        var invitationTokensOfAdminId = invitationTokenRepository.GetBy(
+            invitationToken => invitationToken.InvitedByUserId == adminId
+        );
+
+        return Task.FromResult(invitationTokensOfAdminId.Select(invitationToken => new InvitationToken
+        {
+            Token = invitationToken.Token,
+            InvitedUserId = invitationToken.InvitedUserId,
+            InvitedByUserId = invitationToken.InvitedUserId,
+            Id = invitationToken.Id,
+            CreatedAt = invitationToken.CreatedAt
+        }).ToList());
+    }
 }

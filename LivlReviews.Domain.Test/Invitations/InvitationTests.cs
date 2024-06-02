@@ -15,13 +15,13 @@ public class InvitationTests
     {
         // Arrange
         SpyInvitationDelivery invitationDelivery = new SpyInvitationDelivery();
-        User user = new User { Role = Role.Admin, Email = "admin@email.com", Id = "1"};
-        IUserInventory userInventory = new StubUserInventory(user);
+        User sender = UsersStub.Admin;
+        IUserInventory userInventory = new StubUserInventory([sender]);
         
         IInvitationSender invitationSender = new InvitationSender(invitationDelivery, userInventory);
         
         // Act
-        invitationSender.SendInvitation("1", "invitedUser@email.com");
+        invitationSender.SendInvitation(sender.Id, "invitedUser@email.com");
         
         // Assert
        Assert.True(invitationDelivery.IsDeliverInvitationCalled);
@@ -32,13 +32,13 @@ public class InvitationTests
     {
         // Arrange
         SpyInvitationDelivery invitationDelivery = new SpyInvitationDelivery();
-        User user = new User { Role = Role.User, Email = "user@email.com", Id = "1"};
-        IUserInventory userInventory = new StubUserInventory(user);
+        User sender = UsersStub.User;
+        IUserInventory userInventory = new StubUserInventory([sender]);
 
         IInvitationSender invitationSender = new InvitationSender(invitationDelivery, userInventory);
 
         // Act
-        Task Act () => invitationSender.SendInvitation("2", "invitedUser@email.com");
+        Task Act () => invitationSender.SendInvitation(sender.Id, "invitedUser@email.com");
 
         // Assert
         await Assert.ThrowsAsync<Exception>(Act);
