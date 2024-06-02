@@ -3,7 +3,7 @@ using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain.Entities;
 
-public class Product : ICreatedDate, IUpdatedDate, IDeletedDate
+public class Product : ICreatedDate, IUpdatedDate
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -12,10 +12,20 @@ public class Product : ICreatedDate, IUpdatedDate, IDeletedDate
     public string SourcePage { get; set; }
     public Category Category { get; set; }
     public int CategoryId { get; set; }
+
+    public List<ProductStock> Stocks { get; set; } = new List<ProductStock>();
+    public List<Request> Requests { get; set; } = new List<Request>();
+    
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
 
+    public bool HaveInStock(User admin)
+    {
+        if(admin.Role < Role.Admin) return false;
+        
+        return Stocks.Any(stock => stock.AdminId == admin.Id);
+    }
+    
     public static bool Can(Role role, Operation operation)
     {
         switch (operation)

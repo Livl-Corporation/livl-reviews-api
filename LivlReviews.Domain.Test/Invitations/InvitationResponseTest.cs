@@ -1,8 +1,9 @@
+using LivlReviews.Domain.Domain_interfaces_input;
+using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Test.mocks;
 using LivlReviews.Domain.Test.Stubs;
-using LivlReviews.Domain.Users;
 using Xunit;
 
 namespace LivlReviews.Domain.Test.Invitations;

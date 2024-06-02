@@ -1,4 +1,4 @@
-namespace LivlReviews.Domain;
+namespace LivlReviews.Domain.Domain_interfaces_input;
 
 public interface IInvitationConfirmator
 {
