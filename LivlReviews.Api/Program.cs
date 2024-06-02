@@ -12,6 +12,7 @@ using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using InvitationToken = LivlReviews.Infra.Data.InvitationToken;
 using User = LivlReviews.Infra.Data.User;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +61,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<IPaginatedRepository<Product>, PaginatedEntityRepository<Product>>();
 builder.Services.AddScoped<IRepository<Category>, EntityRepository<Category>>();
+builder.Services.AddScoped<IRepository<InvitationToken>, EntityRepository<InvitationToken>>(); 
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
@@ -117,6 +119,8 @@ builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<IEmailContentService, EmailContentService>();
 
 var app = builder.Build();
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

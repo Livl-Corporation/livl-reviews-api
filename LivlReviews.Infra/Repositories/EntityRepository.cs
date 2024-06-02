@@ -28,7 +28,20 @@ public class EntityRepository<T> : IRepository<T> where T : class
     {
         return DbSet.Where(predicate).ToList();
     }
-    
+
+    public T GetByFirstOrDefault(Func<T, bool> predicate)
+    {
+        var res = DbSet.Where(predicate).ToList().First();
+        if (res is null) return null;
+        return res;
+    }
+    public T GetByFirstOrDefault(Func<T, bool> predicate, T def)
+    {
+        var res = DbSet.Where(predicate).ToList().First();
+        if (res is null) return def;
+        return res;
+    }
+
     public T Add(T entity)
     {
         var res = DbSet.Add(entity).Entity;

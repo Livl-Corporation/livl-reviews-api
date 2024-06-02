@@ -9,11 +9,9 @@ public class Product : ICreatedDate, IUpdatedDate, IDeletedDate
     public string Name { get; set; }
     public string Image { get; set; }
     public string URL { get; set; }
-    public string VinerURL { get; set; }
-    
+    public string SourcePage { get; set; }
     public Category Category { get; set; }
     public int CategoryId { get; set; }
-    
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
