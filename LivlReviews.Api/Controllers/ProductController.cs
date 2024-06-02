@@ -9,13 +9,34 @@ namespace LivlReviews.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class ProductController(IPaginatedRepository<Product> repository) : ControllerBase
+public class ProductController(
+    IPaginatedRepository<Product> repository
+    ) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<PaginatedResult<Product>> GetProducts(int page = 1, int pageSize = 10, string search = "")
+    public ActionResult<PaginatedResult<Product>> GetProducts(int page = 1, int pageSize = 10, string search = "", int? category = null)
     {
         PaginationParameters paginationParameters = new PaginationParameters { page = page, pageSize = pageSize };
-        PaginatedResult<Product> products = repository.GetPaginated(product => product.Name.Contains(search), paginationParameters);
+        
+        PaginatedResult<Product> products = repository.GetPaginated(
+            product => (category == null || product.CategoryId == category) && product.Name.Contains(search), 
+            paginationParameters
+        );
+        
         return Ok(products);
     }
+    
+    [HttpGet("{id}")]
+    public ActionResult<Product> GetProduct(int id)
+    {
+        var product = repository.GetById(id);
+        
+        if (product == null)
+        {
+            return NotFound();
+        }
+        
+        return Ok(product);
+    }
+    
 }

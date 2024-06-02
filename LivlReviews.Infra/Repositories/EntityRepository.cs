@@ -14,7 +14,7 @@ public class EntityRepository<T> : IRepository<T> where T : class
         DbContext = dbContext;
         DbSet = DbContext.Set<T>();
     }
-    public T GetById(int id)
+    public T? GetById(int id)
     {
         return DbSet.Find(id);
     }

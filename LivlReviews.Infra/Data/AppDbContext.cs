@@ -18,6 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        this.CreateRelationships(modelBuilder);
+        
         base.OnModelCreating(modelBuilder);
     }
 
@@ -41,6 +43,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
         }
     }
     
+    private void CreateRelationships(ModelBuilder modelBuilder)
+    {        
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<Category>()
+            .HasMany(c => c.Children)
+            .WithOne(c => c.Parent)
+            .HasForeignKey(c => c.ParentId)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
+    }
+    
     public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
     public DbSet<InvitationToken> InvitationTokens { get; set; }
 }
