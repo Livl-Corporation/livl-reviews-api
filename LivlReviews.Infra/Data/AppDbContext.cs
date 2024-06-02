@@ -11,6 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
     public DbSet<Product> Products { get; set; }
     public DbSet<UserProduct> UserProducts { get; set; }
     public DbSet<ProductRequest> ProductRequests { get; set; }
+    public DbSet<InvitationToken> InvitationTokens { get; set; }
     
     public override int SaveChanges()
     {
