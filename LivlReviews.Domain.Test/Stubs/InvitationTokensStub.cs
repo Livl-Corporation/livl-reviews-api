@@ -26,7 +26,15 @@ public class InvitationTokensStub
         Token = "token-test-3",
         InvitedUserId = UsersStub.User3.Id,
         InvitedByUserId = UsersStub.Admin.Id,
-        Id = 1,
+        Id = 3,
+        CreatedAt = new DateTime()
+    };
+    public static InvitationToken InvitationToken4 = new InvitationToken
+    {
+        Token = "token-test-4",
+        InvitedUserId = UsersStub.User4.Id,
+        InvitedByUserId = UsersStub.Admin2.Id,
+        Id = 4,
         CreatedAt = new DateTime()
     };
 }

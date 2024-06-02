@@ -28,6 +28,7 @@ public class ShouldGetAdminUsers
             InvitationTokensStub.InvitationToken,
             InvitationTokensStub.InvitationToken2,
             InvitationTokensStub.InvitationToken3,
+            InvitationTokensStub.InvitationToken4,
         ];
 
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory(invitationTokens);
@@ -47,6 +48,5 @@ public class ShouldGetAdminUsers
 
         // Assert
         Assert.Equal(expectedResult, adminUsersResult);
-        
     }
 }

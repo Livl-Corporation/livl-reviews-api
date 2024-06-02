@@ -17,7 +17,7 @@ public class UserInventory (UserManager<Data.User> userManager) : IUserInventory
             throw new UserNotFoundException();
         }
         
-        return new User { Id = userResult.Id, Email = userResult.Email ?? string.Empty, Role = userResult.Role};
+        return new User { Id = userResult.Id, Email = userResult.Email ?? string.Empty, Role = userResult.Role, isConfirmed = userResult.EmailConfirmed};
     }
 
     public async Task<User> ValidateUser(string userId, string password)
