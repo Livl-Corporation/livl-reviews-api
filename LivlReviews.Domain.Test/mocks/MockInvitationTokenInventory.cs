@@ -14,4 +14,10 @@ public class MockInvitationTokenInventory(List<InvitationToken> invitationTokens
 
         return Task.FromResult(foundToken);
     }
+
+    public Task<List<InvitationToken>> GetTokensByAdminId(string adminId)
+    {
+        var foundTokens = invitationTokens.Where(invitationToken => invitationToken.InvitedByUserId == adminId).ToList();
+        return Task.FromResult(foundTokens);
+    }
 }

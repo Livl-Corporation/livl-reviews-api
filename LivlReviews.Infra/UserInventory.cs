@@ -8,7 +8,7 @@ namespace LivlReviews.Infra;
 public class UserInventory (UserManager<Data.User> userManager) : IUserInventory
 {
     
-    public async Task<User> GetUserById(string userId)
+    public async Task<User?> GetUserById(string userId)
     {
         var userResult = await userManager.FindByIdAsync(userId);
         
