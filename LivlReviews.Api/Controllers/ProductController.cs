@@ -1,8 +1,12 @@
 using System.Security.Claims;
+using LivlReviews.Domain;
 using LivlReviews.Domain.Entities;
+using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Models;
+using LivlReviews.Infra.Inventories;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LivlReviews.Api.Controllers;
@@ -12,7 +16,9 @@ namespace LivlReviews.Api.Controllers;
 [Route("[controller]")]
 public class ProductController(
     IPaginatedRepository<Product> paginatedRepository,
-    IRepository<ProductRequest> productRequestRepository) : ControllerBase
+    IRepository<ProductRequest> productRequestRepository,
+    UserManager<User> userManager
+    ) : ControllerBase
 {
     
     [HttpGet]
@@ -44,7 +50,7 @@ public class ProductController(
             return BadRequest(ModelState);
         }
         
-        var product = paginatedRepository.GetById(productRequestBody.ProductId);
+        var product = paginatedRepository.GetById(productRequestBody.UserProductId);
 
         if (product == null)
         {
@@ -61,8 +67,8 @@ public class ProductController(
         var productRequest = new ProductRequest
         {
             UserId = userId,
-            ProductId = product.Id,
-            RequestedAt = DateTime.UtcNow
+            UserProductId = product.Id,
+            State = RequestState.PENDING
         };
 
         productRequestRepository.Add(productRequest);
@@ -70,4 +76,27 @@ public class ProductController(
         return Ok(new { message = "Product requested successfully." });
     }
     
+    [HttpPost("request/{id}/approve")]
+    public async Task<ActionResult> ApproveRequest(int id)
+    {
+        var productRequest = productRequestRepository.GetById(id);
+
+        if (productRequest == null)
+        {
+            return NotFound(new { message = "Request not found." });
+        }
+
+        var user = await userManager.FindByNameAsync(User.Identity.Name);
+        
+        if (user == null)
+        {
+            return Unauthorized(new { message = "User not found." });
+        }
+        
+        var stockManager = new StockManager(new ProductRequestInventory(productRequestRepository));
+        
+        stockManager.ApproveRequest(productRequest);
+        
+        return Ok(new { message = "Request approved successfully." });
+    }
 }

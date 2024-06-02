@@ -49,9 +49,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .HasForeignKey(pr => pr.UserId);
 
         modelBuilder.Entity<ProductRequest>()
-            .HasOne(pr => pr.Product)
+            .HasOne(pr => pr.UserProduct)
             .WithMany(p => p.ProductRequests)
-            .HasForeignKey(pr => pr.ProductId);
+            .HasForeignKey(pr => pr.UserProductId);
     }
 
     private void SetCreatedAtProperty()

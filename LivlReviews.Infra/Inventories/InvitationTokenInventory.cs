@@ -2,7 +2,7 @@ using LivlReviews.Domain;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Infra.Repositories.Interfaces;
 
-namespace LivlReviews.Infra;
+namespace LivlReviews.Infra.Inventories;
 
 public class InvitationTokenInventory(IRepository<Data.InvitationToken> invitationTokenRepository) : IInvitationTokenInventory
 {

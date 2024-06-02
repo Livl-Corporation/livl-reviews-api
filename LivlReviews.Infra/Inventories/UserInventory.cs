@@ -3,7 +3,7 @@ using LivlReviews.Domain.Users;
 using LivlReviews.Infra.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
-namespace LivlReviews.Infra;
+namespace LivlReviews.Infra.Inventories;
 
 public class UserInventory (UserManager<Data.User> userManager) : IUserInventory
 {
