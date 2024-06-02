@@ -47,7 +47,7 @@ public class ProductController(
     }
     
     [HttpPost("{id}/request")]
-    public async Task<ActionResult> RequestProduct(int id)
+    public async Task<ActionResult<Request>> RequestProduct(int id)
     {
         var currentUser = await userManager.GetUserAsync(User);
         if(currentUser is null)
