@@ -39,7 +39,6 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
     
     public void UpdateRequestState(Request request, RequestState state)
     {
-        request.State = state;
-        requestInventory.UpdateRequestState(request);
+        requestInventory.UpdateRequestState(request, state);
     }
 }

@@ -1,5 +1,6 @@
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
+using LivlReviews.Domain.Enums;
 using LivlReviews.Infra.Repositories.Interfaces;
 
 namespace LivlReviews.Infra;
@@ -16,8 +17,9 @@ public class RequestInventory(IRepository<Request> requestRepository, IRepositor
         return requestRepository.Add(request);
     }
     
-    public void UpdateRequestState(Request request)
+    public void UpdateRequestState(Request request, RequestState state)
     {
+        request.State = state;
         requestRepository.Update(request);
     }
 }

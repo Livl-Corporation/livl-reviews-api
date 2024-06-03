@@ -1,10 +1,13 @@
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
+using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain.Test.Stubs;
 
 public class StubRequestInventory(ProductStock stock) : IRequestInventory
 {
+    public Request TestedRequest { get; set; }
+    
     public bool IsRequestable(int productId, string adminId)
     {
         return stock.ProductId == productId && stock.AdminId == adminId;
@@ -15,8 +18,9 @@ public class StubRequestInventory(ProductStock stock) : IRequestInventory
         return request;
     }
     
-    public void UpdateRequestState(Request request)
+    public void UpdateRequestState(Request request, RequestState state)
     {
-        request.State = request.State;
+        request.State = state;
+        TestedRequest = request;
     }
 }

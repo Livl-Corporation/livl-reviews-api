@@ -9,7 +9,12 @@ public class ReviewInventory(IRepository<Review> reviewRepository, IRepository<R
 {
     public bool IsReviewable(int requestId)
     {
-        return requestRepository.GetBy(request => request.Id == requestId && request.State == RequestState.Received).Count > 0;
+        var sevenDaysAgo = DateTime.Now.AddDays(-7);
+        
+        return requestRepository
+            .GetBy(request => request.Id == requestId 
+                              && request.State == RequestState.Received
+                              && request.ReceivedAt <= sevenDaysAgo).Count > 0;
     }
 
     public Review CreateReview(Review review)
