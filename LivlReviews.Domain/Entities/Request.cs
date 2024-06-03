@@ -9,7 +9,7 @@ public class Request : ICreatedDate, IUpdatedDate
     
     public string UserId { get; set; }
     public IUser User { get; set; }
-    
+
     public int ProductId { get; set; }
     public Product Product { get; set; }
     
@@ -32,5 +32,10 @@ public class Request : ICreatedDate, IUpdatedDate
             default:
                 return role >= Role.Admin;
         }
+    }
+
+    public string GetRelevantUserId(IUser user)
+    {
+        return user.IsAdmin ? AdminId : UserId;
     }
 }

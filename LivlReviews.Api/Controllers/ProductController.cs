@@ -1,3 +1,4 @@
+using LivlReviews.Api.Attributes;
 using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Models;
@@ -46,9 +47,13 @@ public class ProductController(
     }
     
     [HttpPost("{id}/request")]
+    [UserIdClaim]
     public async Task<ActionResult<Request>> RequestProduct(int id)
     {
-        var currentUser = await userManager.GetUserAsync(User);
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
+        var currentUser = await userManager.FindByIdAsync(currentUserId);
         if(currentUser is null)
         {
             return Unauthorized();

@@ -3,6 +3,7 @@ using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Invitation;
+using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.Spies;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
@@ -17,7 +18,7 @@ public class InvitationTests
         // Arrange
         SpyInvitationDelivery invitationDelivery = new SpyInvitationDelivery();
         IUser sender = UsersStub.Admin;
-        IUserInventory userInventory = new StubUserInventory([sender]);
+        IUserInventory userInventory = new FakeUserInventory([sender]);
         
         IInvitationSender invitationSender = new InvitationSender(invitationDelivery, userInventory);
         
@@ -34,7 +35,7 @@ public class InvitationTests
         // Arrange
         SpyInvitationDelivery invitationDelivery = new SpyInvitationDelivery();
         IUser sender = UsersStub.User;
-        IUserInventory userInventory = new StubUserInventory([sender]);
+        IUserInventory userInventory = new FakeUserInventory([sender]);
 
         IInvitationSender invitationSender = new InvitationSender(invitationDelivery, userInventory);
 

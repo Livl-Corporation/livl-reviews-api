@@ -1,6 +1,7 @@
 using LivlReviews.Domain.Administration;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
+using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.mocks;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
@@ -19,7 +20,7 @@ public class AdministrationPanelTests
             InvitationTokensStub.InvitationToken3,
             InvitationTokensStub.InvitationToken4,
         ]);
-        IUserInventory userInventory = new StubUserInventory([
+        IUserInventory userInventory = new FakeUserInventory([
             UsersStub.User,
             UsersStub.User2,
             UsersStub.User3,
@@ -50,7 +51,7 @@ public class AdministrationPanelTests
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory([
             InvitationTokensStub.InvitationToken,
         ]);
-        IUserInventory userInventory = new StubUserInventory([
+        IUserInventory userInventory = new FakeUserInventory([
             UsersStub.Admin,
             UsersStub.Admin2,
         ]);
@@ -73,7 +74,7 @@ public class AdministrationPanelTests
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory([
             InvitationTokensStub.InvitationToken
         ]);
-        IUserInventory userInventory = new StubUserInventory([
+        IUserInventory userInventory = new FakeUserInventory([
             UsersStub.Admin,
         ]);
 
@@ -93,7 +94,7 @@ public class AdministrationPanelTests
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory([
             InvitationTokensStub.InvitationToken
         ]);
-        IUserInventory userInventory = new StubUserInventory([
+        IUserInventory userInventory = new FakeUserInventory([
             UsersStub.User,
             UsersStub.Admin
         ]);
