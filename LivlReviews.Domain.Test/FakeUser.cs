@@ -1,17 +1,18 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
-using Microsoft.AspNetCore.Identity;
 
-namespace LivlReviews.Infra.Data;
+namespace LivlReviews.Domain.Test;
 
-public class User : IdentityUser, IUser
+public class FakeUser : IUser
 {
+    public string Id { get; set; }
+    public string Email { get; set; }
     public Role Role { get; set; }
-
+    public bool EmailConfirmed { get; set; }
     public List<Request> SubmittedRequests { get; set; }
     public List<Request> ReceivedRequests { get; set; }
     public List<ProductStock> Stocks { get; set; }
-    public Domain.Entities.InvitationToken? InvitedByToken { get; set; }
+    public InvitationToken? InvitedByToken { get; set; }
     public int? InvitedByTokenId { get; set; }
     public List<InvitationToken> CreatedInvitationTokens { get; set; }
 }

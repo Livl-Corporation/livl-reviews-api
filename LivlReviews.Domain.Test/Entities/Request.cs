@@ -16,25 +16,21 @@ public class RequestTest
             Name = "Product 1",
             URL = "http://product1.com",
         };
-        
-        User admin = new User
-        {
-            Id = "1",
-            Email = "User 1",
-            InvitedById = null
-        };
 
-        User requester = new User
+        FakeUser admin = UsersStub.Admin;
+
+        FakeUser requester = new FakeUser()
         {
             Id = "2",
             Email = "User 2",
-            InvitedById = "1"
+            InvitedByTokenId = 1,
+            InvitedByToken = InvitationTokensStub.InvitationToken,
         };
 
         ProductStock stock = new ProductStock
         {
             ProductId = 1,
-            AdminId = "1"
+            AdminId = UsersStub.Admin.Id
         };
     
         StubRequestInventory requestInventory = new StubRequestInventory(stock);
@@ -59,11 +55,11 @@ public class RequestTest
             URL = "http://product1.com",
         };
         
-        User admin = new User
+        IUser admin = new FakeUser
         {
             Id = "1",
             Email = "User 1",
-            InvitedById = null
+            InvitedByTokenId = null
         };
 
         ProductStock stock = new ProductStock

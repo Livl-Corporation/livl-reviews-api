@@ -16,7 +16,7 @@ public class InvitationTests
     {
         // Arrange
         SpyInvitationDelivery invitationDelivery = new SpyInvitationDelivery();
-        User sender = UsersStub.Admin;
+        IUser sender = UsersStub.Admin;
         IUserInventory userInventory = new StubUserInventory([sender]);
         
         IInvitationSender invitationSender = new InvitationSender(invitationDelivery, userInventory);
@@ -33,7 +33,7 @@ public class InvitationTests
     {
         // Arrange
         SpyInvitationDelivery invitationDelivery = new SpyInvitationDelivery();
-        User sender = UsersStub.User;
+        IUser sender = UsersStub.User;
         IUserInventory userInventory = new StubUserInventory([sender]);
 
         IInvitationSender invitationSender = new InvitationSender(invitationDelivery, userInventory);

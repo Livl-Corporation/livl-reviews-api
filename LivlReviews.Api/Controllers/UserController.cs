@@ -17,7 +17,6 @@ using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using InvitationToken = LivlReviews.Infra.Data.InvitationToken;
 using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Api.Controllers;

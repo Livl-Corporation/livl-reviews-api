@@ -1,7 +1,6 @@
 using LivlReviews.Domain.Administration;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
-using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Test.mocks;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
@@ -30,7 +29,7 @@ public class AdministrationPanelTests
 
         IAdministrationPanel administrationPanel = new AdministrationPanel(invitationTokenInventory, userInventory);
 
-        List<User> expectedResult =
+        List<IUser> expectedResult =
         [
             UsersStub.User,
             UsersStub.User2,
@@ -58,7 +57,7 @@ public class AdministrationPanelTests
 
         IAdministrationPanel administrationPanel = new AdministrationPanel(invitationTokenInventory, userInventory);
 
-        List<User> expectedResult = new List<User>();
+        List<IUser> expectedResult = new List<IUser>();
 
         // Act
         var adminUsersResult = await administrationPanel.GetAdminUsers(UsersStub.Admin2.Id);

@@ -6,5 +6,5 @@ public class ProductStock
     public Product Product { get; set; }
     
     public string AdminId { get; set; }
-    public User Admin { get; set; }
+    public IUser Admin { get; set; }
 }

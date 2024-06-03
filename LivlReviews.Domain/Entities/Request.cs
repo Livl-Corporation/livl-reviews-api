@@ -8,13 +8,13 @@ public class Request : ICreatedDate, IUpdatedDate
     public int Id { get; set; }
     
     public string UserId { get; set; }
-    public User User { get; set; }
+    public IUser User { get; set; }
     
     public int ProductId { get; set; }
     public Product Product { get; set; }
     
     public string AdminId { get; set; }
-    public User Admin { get; set; }
+    public IUser Admin { get; set; }
     
     public RequestState State { get; set; }
     

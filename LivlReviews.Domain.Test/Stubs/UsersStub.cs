@@ -5,62 +5,62 @@ namespace LivlReviews.Domain.Test.Stubs;
 
 public class UsersStub
 {
-    public static User User = new User
+    public static FakeUser User = new FakeUser
     {
         Email = "jose@email.fr",
-        isConfirmed = true,
+        EmailConfirmed = true,
         Role = Role.User,
         Id = "1"
     };
 
-    public static User User2 = new User
+    public static FakeUser User2 = new FakeUser
     {
         Email = "isamet@email.fr",
-        isConfirmed = true,
+        EmailConfirmed = true,
         Role = Role.User,
         Id = "2"
     };
-    public static User User3 = new User
+    public static FakeUser User3 = new FakeUser
     {
         Email = "romain@email.fr",
-        isConfirmed = true,
+        EmailConfirmed = true,
         Role = Role.User,
         Id = "3"
     };
-    public static User User4 = new User
+    public static FakeUser User4 = new FakeUser
     {
         Email = "arthur@email.fr",
-        isConfirmed = true,
+        EmailConfirmed = true,
         Role = Role.User,
         Id = "4"
     };
-    public static User User5 = new User
+    public static FakeUser User5 = new FakeUser
     {
         Email = "lovan@email.fr",
-        isConfirmed = true,
+        EmailConfirmed = true,
         Role = Role.User,
         Id = "5"
     };
-    public static User User6 = new User
+    public static FakeUser User6 = new FakeUser
     {
         Email = "samyyy@email.fr",
-        isConfirmed = true,
+        EmailConfirmed = true,
         Role = Role.User,
         Id = "6"
     };
     
-    public static User Admin = new User
+    public static FakeUser Admin = new FakeUser
     {
         Email = "ravael@email.fr",
-        isConfirmed = true,
+        EmailConfirmed = true,
         Role = Role.Admin,
         Id = "7"
     };
     
-    public static User Admin2 = new User
+    public static FakeUser Admin2 = new FakeUser
     {
         Email = "vulien@email.fr",
-        isConfirmed = true,
+        EmailConfirmed = true,
         Role = Role.Admin,
         Id = "8"
     };

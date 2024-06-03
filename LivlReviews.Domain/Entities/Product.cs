@@ -19,7 +19,7 @@ public class Product : ICreatedDate, IUpdatedDate
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public bool HaveInStock(User admin)
+    public bool HaveInStock(IUser admin)
     {
         if(admin.Role < Role.Admin) return false;
         

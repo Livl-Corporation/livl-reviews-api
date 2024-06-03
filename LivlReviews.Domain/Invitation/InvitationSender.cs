@@ -10,7 +10,7 @@ public class InvitationSender(IInvitationDelivery invitationDelivery, IUserInven
 
     public async Task SendInvitation(string senderUserId, string email)
     {
-        User? sender = await userInventory.GetUserById(senderUserId);
+        IUser? sender = await userInventory.GetUserById(senderUserId);
         
         if(sender is null)
         {
@@ -21,8 +21,10 @@ public class InvitationSender(IInvitationDelivery invitationDelivery, IUserInven
         {
             throw new Exception("Only admins can send invitations");
         }
+
+        IUser invitedUser = await userInventory.CreateUserObject(sender, email);
         
-        User invitedUser = new User { Email = email, Role = Role.User, InvitedById = senderUserId, InvitedBy = sender };
+        // User invitedUser = new User { Email = email, Role = Role.User, InvitedById = senderUserId, InvitedBy = sender };
         
         await invitationDelivery.DeliverInvitation(senderUserId, invitedUser);
     }

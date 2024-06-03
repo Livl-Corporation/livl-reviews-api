@@ -68,13 +68,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Request>()
-            .HasOne(r => r.User)
+            .HasOne<User>(r => r.User as User)
             .WithMany(u => u.SubmittedRequests)
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.SetNull);
-
+            
         modelBuilder.Entity<Request>()
-            .HasOne(r => r.Admin)
+            .HasOne<User>(r => r.Admin as User)
             .WithMany(u => u.ReceivedRequests)
             .HasForeignKey(r => r.AdminId)
             .OnDelete(DeleteBehavior.SetNull);
@@ -89,20 +89,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .OnDelete(DeleteBehavior.NoAction);
         
         modelBuilder.Entity<ProductStock>()
-            .HasOne(ps => ps.Admin)
+            .HasOne<User>(ps => ps.Admin as User)
             .WithMany(u => u.Stocks)
             .HasForeignKey(ps => ps.AdminId)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<InvitationToken>()
-            .HasOne(i => i.InvitedUser)
+            .HasOne(i => i.InvitedUser as User)
             .WithOne(u => u.InvitedByToken)
             .HasForeignKey<InvitationToken>(i => i.InvitedUserId);
 
-        modelBuilder.Entity<User>()
-            .HasMany(u => u.CreatedInvitationTokens)
-            .WithOne(i => i.InvitedByUser)
+        modelBuilder.Entity<InvitationToken>()
+            .HasOne(i => i.InvitedByUser as User)
+            .WithMany(u => u.CreatedInvitationTokens)
             .HasForeignKey(i => i.InvitedByUserId);
+
     }
     
     public DbSet<Product> Products { get; set; }

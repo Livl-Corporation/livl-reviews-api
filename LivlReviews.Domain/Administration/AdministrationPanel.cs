@@ -5,9 +5,9 @@ namespace LivlReviews.Domain.Administration;
 
 public class AdministrationPanel(IInvitationTokenInventory invitationTokenInventory, IUserInventory userInventory): IAdministrationPanel
 {
-    public async Task<List<User?>> GetAdminUsers(string adminUserId)
+    public async Task<List<IUser?>> GetAdminUsers(string adminUserId)
     {
-        User? adminUser = await userInventory.GetUserById(adminUserId);
+        IUser? adminUser = await userInventory.GetUserById(adminUserId);
         
         if(adminUser is null) 
         {
@@ -23,7 +23,7 @@ public class AdministrationPanel(IInvitationTokenInventory invitationTokenInvent
          
         List<string> invitedUserIds = invitationTokens.Select(invitationToken => invitationToken.InvitedUserId).ToList();
         
-        List<User?> invitedUsers = new List<User?>();
+        List<IUser?> invitedUsers = new List<IUser?>();
 
         foreach (var userId in invitedUserIds)
         {
@@ -34,12 +34,12 @@ public class AdministrationPanel(IInvitationTokenInventory invitationTokenInvent
         return invitedUsers;
     }
 
-    public Task<User> EnableUser(string adminUserId, string userId)
+    public Task<IUser> EnableUser(string adminUserId, string userId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<User> DisableUser(string adminUserId, string userId)
+    public Task<IUser> DisableUser(string adminUserId, string userId)
     {
         throw new NotImplementedException();
     }

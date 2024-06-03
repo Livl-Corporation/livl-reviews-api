@@ -5,7 +5,7 @@ using LivlReviews.Infra.Repositories.Interfaces;
 
 namespace LivlReviews.Infra;
 
-public class InvitationTokenInventory(IRepository<Data.InvitationToken> invitationTokenRepository) : IInvitationTokenInventory
+public class InvitationTokenInventory(IRepository<InvitationToken> invitationTokenRepository) : IInvitationTokenInventory
 {
     public async Task<InvitationToken> GetToken(string token)
     {
