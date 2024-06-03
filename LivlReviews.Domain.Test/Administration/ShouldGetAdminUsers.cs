@@ -2,6 +2,7 @@ using LivlReviews.Domain.Administration;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.mocks;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
@@ -32,7 +33,7 @@ public class ShouldGetAdminUsers
         ];
 
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory(invitationTokens);
-        IUserInventory userInventory = new StubUserInventory(users);
+        IUserInventory userInventory = new FakeUserInventory(users);
 
         IAdministrationPanel administrationPanel = new AdministrationPanel(invitationTokenInventory, userInventory);
 
