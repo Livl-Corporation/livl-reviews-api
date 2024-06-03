@@ -1,4 +1,6 @@
 using LivlReviews.Api.Attributes;
+using LivlReviews.Domain;
+using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Models;
@@ -13,7 +15,7 @@ namespace LivlReviews.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class RequestController(IPaginatedRepository<Request> repository, UserManager<User> userManager) : ControllerBase
+public class RequestController(IPaginatedRepository<Request> repository, UserManager<User> userManager, IStockManager stockManager) : ControllerBase
 {
     [HttpGet]
     [UserIdClaim]
@@ -75,8 +77,8 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
         {
             return NotFound();
         }
-        
-        
+
+        stockManager.ApproveRequest(request, currentUser);
         
         return Ok(request);
     }
