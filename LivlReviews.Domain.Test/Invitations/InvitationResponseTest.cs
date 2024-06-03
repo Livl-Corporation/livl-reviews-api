@@ -20,7 +20,7 @@ public class InvitationResponseTest
             InvitationTokensStub.InvitationToken2,
         ];
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory(tokenList);
-        User user = new User { Role = Role.User, Email = "admin@email.com", Id = "1", isConfirmed = false};
+        IUser user = new FakeUser { Role = Role.User, Email = "admin@email.com", Id = "1", EmailConfirmed = false};
         StubUserInventory userInventory = new StubUserInventory([user]);
 
 
@@ -44,7 +44,7 @@ public class InvitationResponseTest
         ];
         
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory(tokenList);
-        User user = new User { Role = Role.User, Email = "admin@email.com", Id = "1", isConfirmed = false};
+        IUser user = new FakeUser { Role = Role.User, Email = "admin@email.com", Id = "1", EmailConfirmed = false};
         StubUserInventory userInventory = new StubUserInventory([user]);
 
 

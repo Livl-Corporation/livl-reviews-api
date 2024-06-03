@@ -8,7 +8,7 @@ public class SpyInvitationDelivery : IInvitationDelivery
 
     public bool IsDeliverInvitationCalled { get; private set; } = false;
 
-    public Task DeliverInvitation(string senderUsierId, User invitedUser)
+    public Task DeliverInvitation(string senderUsierId, IUser invitedUser)
     {
         IsDeliverInvitationCalled = true;
         return Task.CompletedTask;

@@ -35,7 +35,7 @@ public class CategoryController(IRepository<Category> categoriesRepository, User
     [HttpPost]
     public ActionResult<Category> CreateCategory(Category category)
     {
-        Domain.Entities.User user = userManager.FindByNameAsync(User.Identity.Name).Result.ToDomainUser();
+        IUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
         
         if (!Category.Can(user.Role, Operation.CREATE))
         {
@@ -54,7 +54,7 @@ public class CategoryController(IRepository<Category> categoriesRepository, User
             return BadRequest();
         }
         
-        Domain.Entities.User user = userManager.FindByNameAsync(User.Identity.Name).Result.ToDomainUser();
+        IUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
         
         if (!Category.Can(user.Role, Operation.UPDATE))
         {
@@ -69,7 +69,7 @@ public class CategoryController(IRepository<Category> categoriesRepository, User
     [HttpDelete("{id}")]
     public IActionResult DeleteCategory(int id)
     {
-        Domain.Entities.User user = userManager.FindByNameAsync(User.Identity.Name).Result.ToDomainUser();
+        IUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
     
         if (!Category.Can(user.Role, Operation.DELETE))
         {

@@ -1,17 +1,17 @@
 using System.Net.Mail;
 using LivlReviews.Domain;
 using LivlReviews.Domain.Domain_interfaces_output;
+using LivlReviews.Domain.Entities;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using User = LivlReviews.Domain.Entities.User;
+using InvitationToken = LivlReviews.Infra.Data.InvitationToken;
 
 namespace LivlReviews.Infra;
 
-public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<InvitationToken> invitationTokenRepository) : IInvitationDelivery
+public class InvitationDelivery(UserManager<User> userManager, IRepository<InvitationToken> invitationTokenRepository) : IInvitationDelivery
 {
-    
-    public async Task DeliverInvitation(string senderUserId, User invitedUser)
+    public async Task DeliverInvitation(string senderUserId, IUser invitedUser)
     {
         var admin = await userManager.FindByIdAsync(senderUserId);
         if(admin is null)
@@ -19,7 +19,7 @@ public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<
             throw new Exception("Admin not found");
         }
         
-        var newUser = new Data.User
+        var newUser = new User
         {
             Email = invitedUser.Email,
             UserName = new MailAddress(invitedUser.Email).User,
