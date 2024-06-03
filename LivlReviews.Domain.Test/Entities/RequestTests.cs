@@ -5,7 +5,7 @@ using Xunit;
 
 namespace LivlReviews.Domain.Test.Entities;
 
-public class RequestTest
+public class RequestTests
 {
     [Fact]
     public void Is_Product_Requestable()
