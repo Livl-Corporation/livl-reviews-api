@@ -27,8 +27,6 @@ public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<
             Email = invitedUser.Email,
             UserName = new MailAddress(invitedUser.Email).User,
             Role = invitedUser.Role,
-            InvitedBy = admin,
-            InvitedById = invitedUser.InvitedById,
         };
         var userResult = await userManager.CreateAsync(newUser);
         
@@ -50,7 +48,6 @@ public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<
         User userWithToken = newUser;
         userWithToken.InvitedByTokenId = invitationTokenResult.Id;
         await userManager.UpdateAsync(userWithToken);
-        
         
         // TODO : We should send the email from there too :)
     }
