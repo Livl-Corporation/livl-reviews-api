@@ -1,4 +1,3 @@
-using LivlReviews.Domain;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,8 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        this.CreateRelationships(modelBuilder);
-        
+        CreateRelationships(modelBuilder);
+        ConfigureEntityConstraints(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
 
@@ -107,6 +106,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
         
         modelBuilder.Entity<Review>()
             .HasOne<Request>(r => r.Request);
+    }
+    
+    private void ConfigureEntityConstraints(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.Property(r => r.Title)
+                .HasMaxLength(255);
+
+            entity.Property(r => r.Content)
+                .HasMaxLength(10000);
+        });
     }
     
     public DbSet<Product> Products { get; set; }
