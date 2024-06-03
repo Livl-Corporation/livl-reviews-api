@@ -12,4 +12,6 @@ public class User : IdentityUser, IUser
     public List<Request> SubmittedRequests { get; set; }
     public List<Request> ReceivedRequests { get; set; }
     public List<ProductStock> Stocks { get; set; }
+    
+    public bool IsAdmin => Role == Role.Admin;
 }

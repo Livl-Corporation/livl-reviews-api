@@ -28,6 +28,18 @@ public class EntityRepository<T> : IRepository<T> where T : class
     {
         return DbSet.Where(predicate).ToList();
     }
+    
+    public List<T> GetAndInclude(Func<T, bool> predicate, string[] include)
+    {
+        var query = DbSet.AsQueryable();
+        
+        foreach (var inc in include)
+        {
+            query = query.Include(inc);
+        }
+        
+        return query.Where(predicate).ToList();
+    }
 
     public T GetByFirstOrDefault(Func<T, bool> predicate)
     {

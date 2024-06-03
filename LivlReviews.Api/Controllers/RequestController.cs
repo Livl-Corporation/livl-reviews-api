@@ -1,3 +1,4 @@
+using LivlReviews.Api.Attributes;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Models;
@@ -15,13 +16,24 @@ namespace LivlReviews.Api.Controllers;
 public class RequestController(IPaginatedRepository<Request> repository, UserManager<User> userManager) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<PaginatedResult<Request>> GetRequests(int page = 1, int pageSize = 10)
+    [UserIdClaim]
+    public async Task<ActionResult<PaginatedResult<Request>>> GetRequests(int page = 1, int pageSize = 10)
     {
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
+        var currentUser = await userManager.FindByIdAsync(currentUserId);
+        if(currentUser is null)
+        {
+            return Unauthorized();
+        }
+        
         PaginationParameters paginationParameters = new PaginationParameters { page = page, pageSize = pageSize };
         
-        // TODO : add filter ?
         PaginatedResult<Request> requests = repository.GetPaginated(
-            paginationParameters
+            request => currentUser.IsAdmin ? request.AdminId == currentUserId : request.UserId == currentUserId,
+            paginationParameters,
+            ["User", "Product"]
         );
         
         return Ok(requests);
@@ -41,15 +53,19 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
     }
     
     [HttpPost("{id}/approve")]
-    public ActionResult<Request> ApproveRequest(int id)
+    [UserIdClaim]
+    public async Task<ActionResult<Request>> ApproveRequest(int id)
     {
-        var user = userManager.FindByNameAsync(User.Identity.Name).Result;
-        if(user is null)
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
+        var currentUser = await userManager.FindByIdAsync(currentUserId);
+        if(currentUser is null)
         {
             return Unauthorized();
         }
 
-        if (!Domain.Entities.Request.Can(user.Role, Operation.UPDATE))
+        if (!Domain.Entities.Request.Can(currentUser.Role, Operation.UPDATE))
         {
             return Forbid();
         }
