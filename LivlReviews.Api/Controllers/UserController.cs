@@ -75,7 +75,7 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         }
     }
     
-    [HttpGet("users")]
+    [HttpGet()]
     [Authorize]
     [UserIdClaim]
     public async Task<IActionResult> GetUsers()
