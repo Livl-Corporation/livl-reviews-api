@@ -36,6 +36,11 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
 
         return res;
     }
+    
+    public void UpdateRequestState(Request request, RequestState state)
+    {
+        requestInventory.UpdateRequestState(request, state);
+    }
 
     public Request ApproveRequest(Request request, IUser requester)
     {

@@ -44,7 +44,7 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("LivlReviews.Domain.Entities.InvitationToken", b =>
@@ -116,7 +116,7 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("LivlReviews.Domain.Entities.ProductStock", b =>
@@ -131,7 +131,7 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.ToTable("Stocks", (string)null);
+                    b.ToTable("Stocks");
                 });
 
             modelBuilder.Entity("LivlReviews.Domain.Entities.Request", b =>
@@ -152,6 +152,9 @@ namespace LivlReviews.Infra.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("ReceivedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("State")
                         .HasColumnType("integer");
 
@@ -170,37 +173,40 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Requests", (string)null);
+                    b.ToTable("Requests");
                 });
 
-            modelBuilder.Entity("LivlReviews.Infra.Data.InvitationToken", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
+            modelBuilder.Entity("LivlReviews.Domain.Entities.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                b.Property<DateTime>("CreatedAt")
-                    .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
 
-                b.Property<string>("InvitedByUserId")
-                    .IsRequired()
-                    .HasColumnType("text");
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
 
-                b.Property<string>("InvitedUserId")
-                    .IsRequired()
-                    .HasColumnType("text");
+                    b.Property<int>("RequestId")
+                        .HasColumnType("integer");
 
-                b.Property<string>("Token")
-                    .IsRequired()
-                    .HasColumnType("text");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("InvitationTokens", (string)null);
-            });
-            
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("LivlReviews.Infra.Data.User", b =>
                 {
                     b.Property<string>("Id")
@@ -419,6 +425,17 @@ namespace LivlReviews.Infra.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LivlReviews.Domain.Entities.Review", b =>
+                {
+                    b.HasOne("LivlReviews.Domain.Entities.Request", "Request")
+                        .WithMany()
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>

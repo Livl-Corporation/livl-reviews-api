@@ -5,7 +5,7 @@ using LivlReviews.Infra.Repositories.Interfaces;
 
 namespace LivlReviews.Infra;
 
-public class RequestInventory(IRepository<Request> requestRepository, IRepository<ProductStock> stockRepository) : IRequestInventory
+public class RequestInventory(IPaginatedRepository<Request> requestRepository, IRepository<ProductStock> stockRepository) : IRequestInventory
 {
     public bool IsRequestable(int productId, string adminId)
     {
@@ -43,5 +43,11 @@ public class RequestInventory(IRepository<Request> requestRepository, IRepositor
         request.State = RequestState.Rejected;
         
         return requestRepository.Update(request);
+    }
+    
+    public void UpdateRequestState(Request request, RequestState state)
+    {
+        request.State = state;
+        requestRepository.Update(request);
     }
 }

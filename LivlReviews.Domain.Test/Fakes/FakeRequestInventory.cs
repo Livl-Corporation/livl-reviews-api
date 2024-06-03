@@ -18,7 +18,13 @@ public class FakeRequestInventory(List<ProductStock> stocks, List<Request> reque
     {
         return request;
     }
-    
+
+    public void UpdateRequestState(Request request, RequestState state)
+    {
+        var idx = requests.FindIndex(r => r.Id == request.Id);
+        requests[idx].State = state;
+    }
+
     public List<Request> GetSimilarPendingRequests(Request request)
     {
         return requests.FindAll(r => r.ProductId == request.ProductId && r.AdminId == request.AdminId && r.State == RequestState.Pending && r.Id != request.Id);

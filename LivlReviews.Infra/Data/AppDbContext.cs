@@ -18,8 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        this.CreateRelationships(modelBuilder);
-        
+        CreateRelationships(modelBuilder);
+        ConfigureEntityConstraints(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
 
@@ -103,12 +103,27 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .HasOne(i => i.InvitedByUser as User)
             .WithMany(u => u.CreatedInvitationTokens)
             .HasForeignKey(i => i.InvitedByUserId);
+        
+        modelBuilder.Entity<Review>()
+            .HasOne<Request>(r => r.Request);
+    }
+    
+    private void ConfigureEntityConstraints(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.Property(r => r.Title)
+                .HasMaxLength(255);
 
+            entity.Property(r => r.Content)
+                .HasMaxLength(10000);
+        });
     }
     
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<InvitationToken> InvitationTokens { get; set; }
     public DbSet<Request> Requests { get; set; }
+    public DbSet<Review> Reviews { get; set; }
     public DbSet<ProductStock> Stocks { get; set; }
 }
