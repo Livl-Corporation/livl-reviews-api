@@ -1,7 +1,7 @@
-﻿using LivlReviews.Api.Models;
+﻿using LivlReviews.Api.Attributes;
+using LivlReviews.Api.Models;
 using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
-using LivlReviews.Domain.Enums;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -19,17 +19,15 @@ public class ReviewController(
     IReviewManager reviewManager) : ControllerBase
 {
     [HttpPost]
+    [UserIdClaim]
     public async Task<ActionResult> CreateReview([FromBody] PostReviewRequest reviewRequest)
     {
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
-        }
-        
-        var currentUser = await userManager.GetUserAsync(User);
-        if(currentUser is null)
-        {
-            return Unauthorized();
         }
         
         var request = requestRepository.GetById(reviewRequest.RequestId);
