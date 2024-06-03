@@ -1,6 +1,7 @@
 ﻿using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Test.Clock;
+using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
 
@@ -21,7 +22,7 @@ public class ReviewTest
 
         var fakeClock = new FakeClock(new DateTime(2024, 5, 28)); // 8 days after 
 
-        var reviewInventory = new StubReviewInventory(request, fakeClock);
+        var reviewInventory = new FakeReviewInventory(request, fakeClock);
 
         // Act
         var result = reviewInventory.IsReviewable(request.Id);
@@ -43,7 +44,7 @@ public class ReviewTest
 
         var fakeClock = new FakeClock(new DateTime(2024, 5, 28)); // 5 days after
 
-        var reviewInventory = new StubReviewInventory(request, fakeClock);
+        var reviewInventory = new FakeReviewInventory(request, fakeClock);
 
         // Act
         var result = reviewInventory.IsReviewable(request.Id);
@@ -65,8 +66,8 @@ public class ReviewTest
 
         var fakeClock = new FakeClock(new DateTime(2024, 5, 28)); // 8 days after 
 
-        var reviewInventory = new StubReviewInventory(request, fakeClock);
-        var requestInventory = new StubRequestInventory(new ProductStock());
+        var reviewInventory = new FakeReviewInventory(request, fakeClock);
+        var requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request> { request });
         var stockManager = new StockManager(requestInventory);
         
         var reviewManager = new ReviewManager(reviewInventory, stockManager);
@@ -85,7 +86,7 @@ public class ReviewTest
         reviewManager.CreateReview(review);
 
         // Assert
-        
-        Assert.Equal(RequestState.Completed, requestInventory.TestedRequest.State);
+        var requestState = requestInventory.requests.Find(r => r.Id == request.Id)?.State;
+        Assert.Equal(RequestState.Completed, requestState);
     }
 }

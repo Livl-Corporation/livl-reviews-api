@@ -5,7 +5,7 @@ using LivlReviews.Domain.Test.Clock;
 
 namespace LivlReviews.Domain.Test.Stubs;
 
-public class StubReviewInventory(Request request, IClock clock) : IReviewInventory
+public class FakeReviewInventory(Request request, IClock clock) : IReviewInventory
 {
     public bool IsReviewable(int requestId)
     {
