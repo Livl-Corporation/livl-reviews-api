@@ -28,6 +28,27 @@ public class InvitationTokenInventory(IRepository<InvitationToken> invitationTok
         };
     }
 
+    public InvitationToken GetByInvitedUserId(string invitedUserId)
+    {
+        var invitationToken = invitationTokenRepository.GetByFirstOrDefault(
+            invitationToken => invitationToken.InvitedUserId == invitedUserId
+        );
+
+        if (invitationToken is null)
+        {
+            throw new Exception("Invitation token not found");
+        }
+
+        return new InvitationToken
+        {
+            Token = invitationToken.Token,
+            InvitedUserId = invitationToken.InvitedUserId,
+            InvitedByUserId = invitationToken.InvitedUserId,
+            Id = invitationToken.Id,
+            CreatedAt = invitationToken.CreatedAt
+        };
+    }
+
     public Task<List<InvitationToken>> GetTokensByAdminId(string adminId)
     {
         var invitationTokensOfAdminId = invitationTokenRepository.GetBy(
@@ -42,5 +63,11 @@ public class InvitationTokenInventory(IRepository<InvitationToken> invitationTok
             Id = invitationToken.Id,
             CreatedAt = invitationToken.CreatedAt
         }).ToList());
+    }
+    
+    public InvitationToken Add(InvitationToken invitationToken)
+    {
+        var result = invitationTokenRepository.Add(invitationToken);
+        return result;
     }
 }

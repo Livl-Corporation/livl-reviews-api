@@ -40,12 +40,12 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         try
         {
             IInvitationSender invitationSender = new InvitationSender(
-                new InvitationDelivery(userManager, invitationTokenRepository),
+                new InvitationTokenInventory(invitationTokenRepository),
                 new UserInventory(userManager)
             );
             await invitationSender.SendInvitation(currentUserId, request.Email);
         } catch (Exception e)
-        {
+        { 
             return BadRequest(e.Message);
         }
 
