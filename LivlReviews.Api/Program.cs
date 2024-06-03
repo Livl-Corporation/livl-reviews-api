@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(option =>
@@ -67,6 +67,7 @@ builder.Services.AddScoped<IPaginatedRepository<Product>, PaginatedEntityReposit
 builder.Services.AddScoped<IRepository<Category>, EntityRepository<Category>>();
 builder.Services.AddScoped<IRepository<InvitationToken>, EntityRepository<InvitationToken>>();
 builder.Services.AddScoped<IRepository<Request>, EntityRepository<Request>>();
+builder.Services.AddScoped<IPaginatedRepository<Request>, PaginatedEntityRepository<Request>>();
 builder.Services.AddScoped<IRepository<ProductStock>, EntityRepository<ProductStock>>();
 builder.Services.AddScoped<IRequestInventory, RequestInventory>();
 builder.Services.AddScoped<IStockManager, StockManager>();

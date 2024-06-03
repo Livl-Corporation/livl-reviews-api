@@ -23,7 +23,7 @@ public class EntityRepository<T> : IRepository<T> where T : class
     { 
         return DbSet.ToList();
     }
-    
+
     public List<T> GetBy(Func<T, bool> predicate)
     {
         return DbSet.Where(predicate).ToList();

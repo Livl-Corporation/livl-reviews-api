@@ -44,7 +44,7 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("LivlReviews.Domain.Entities.Product", b =>
@@ -84,7 +84,7 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("LivlReviews.Domain.Entities.ProductStock", b =>
@@ -99,7 +99,7 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.ToTable("Stocks");
+                    b.ToTable("Stocks", (string)null);
                 });
 
             modelBuilder.Entity("LivlReviews.Domain.Entities.Request", b =>
@@ -138,7 +138,7 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Requests");
+                    b.ToTable("Requests", (string)null);
                 });
 
             modelBuilder.Entity("LivlReviews.Infra.Data.InvitationToken", b =>
@@ -166,7 +166,7 @@ namespace LivlReviews.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("InvitationTokens");
+                    b.ToTable("InvitationTokens", (string)null);
                 });
 
             modelBuilder.Entity("LivlReviews.Infra.Data.User", b =>

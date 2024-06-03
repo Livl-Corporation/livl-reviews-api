@@ -9,7 +9,7 @@ public class Request : ICreatedDate, IUpdatedDate
     
     public string UserId { get; set; }
     public IUser User { get; set; }
-    
+
     public int ProductId { get; set; }
     public Product Product { get; set; }
     
