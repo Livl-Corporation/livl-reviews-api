@@ -2,10 +2,8 @@
 using LivlReviews.Api.Models;
 using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
-using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LivlReviews.Api.Controllers;
@@ -15,7 +13,6 @@ namespace LivlReviews.Api.Controllers;
 [Route("[controller]")]
 public class ReviewController(
     IPaginatedRepository<Request> requestRepository, 
-    UserManager<User> userManager, 
     IReviewManager reviewManager) : ControllerBase
 {
     [HttpPost]
