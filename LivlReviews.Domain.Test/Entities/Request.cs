@@ -1,4 +1,5 @@
 using LivlReviews.Domain.Entities;
+using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
 
@@ -16,13 +17,6 @@ public class RequestTest
             Name = "Product 1",
             URL = "http://product1.com",
         };
-        
-        FakeUser admin = new FakeUser()
-        {
-            Id = "1",
-            Email = "User 1",
-            InvitedById = null
-        };
 
         FakeUser requester = new FakeUser()
         {
@@ -37,7 +31,7 @@ public class RequestTest
             AdminId = "1"
         };
     
-        StubRequestInventory requestInventory = new StubRequestInventory(stock);
+        StubRequestInventory requestInventory = new StubRequestInventory([stock], []);
         
         StockManager stockManager = new StockManager(requestInventory);
         
@@ -72,7 +66,7 @@ public class RequestTest
             AdminId = "1"
         };
     
-        StubRequestInventory requestInventory = new StubRequestInventory(stock);
+        StubRequestInventory requestInventory = new StubRequestInventory([stock], []);
         
         StockManager stockManager = new StockManager(requestInventory);
         
@@ -81,5 +75,52 @@ public class RequestTest
 
         // Assert
         Assert.False(isRequestable);
+    }
+
+    [Fact]
+    public void Approve_a_request_reject_other_request_on_same_product()
+    {
+        // Arrange
+        FakeUser requester = new FakeUser
+        {
+            Id = "2",
+            Email = "User 2",
+            InvitedById = "1"
+        };
+        
+        ProductStock stock = new ProductStock
+        {
+            AdminId = "1",
+            ProductId = 1
+        };
+        
+        Request firstRequest = new Request
+        {
+            Id = 1,
+            ProductId = 1,
+            AdminId = "1",
+            UserId = "2",
+            State = RequestState.Pending
+        };
+
+        Request secondRequest = new Request
+        {
+            Id = 2,
+            ProductId = 1,
+            AdminId = "1",
+            UserId = "3",
+            State = RequestState.Pending
+        };
+
+        StubRequestInventory requestInventory = new StubRequestInventory([stock], [firstRequest, secondRequest]);
+        
+        StockManager stockManager = new StockManager(requestInventory);
+        
+        // Act
+        Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);
+        
+        // Assert
+        Assert.Equal(RequestState.Approved, requestInventory.requests[0].State);
+        Assert.Equal(RequestState.Rejected, requestInventory.requests[1].State);
     }
 }
