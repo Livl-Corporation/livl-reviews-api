@@ -3,14 +3,13 @@ using LivlReviews.Domain;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
-using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Infra;
 
-public class InvitationDelivery(UserManager<Data.User> userManager, IRepository<InvitationToken> invitationTokenRepository) : IInvitationDelivery
+public class InvitationDelivery(UserManager<User> userManager, IRepository<InvitationToken> invitationTokenRepository) : IInvitationDelivery
 {
     
     public async Task DeliverInvitation(string senderUserId, IUser invitedUser)
