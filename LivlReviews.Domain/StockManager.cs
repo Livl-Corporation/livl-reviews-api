@@ -9,12 +9,12 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
 {
     public bool IsRequestable(Product product, IUser requester)
     {
-        if (requester.InvitedById is null)
+        if (requester.InvitedByTokenId is null)
         {
             return false;
         }   
         
-        return requestInventory.IsRequestable(product.Id, requester.InvitedById);
+        return requestInventory.IsRequestable(product.Id, requester.InvitedByToken.InvitedByUserId);
     }
 
     public Request RequestProduct(Product product, IUser requester)
@@ -27,7 +27,7 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
         Request request = new Request
         {
             ProductId = product.Id,
-            AdminId = requester.InvitedById,
+            AdminId = requester.InvitedByToken.InvitedByUserId,
             UserId = requester.Id,
             State = RequestState.Pending
         };

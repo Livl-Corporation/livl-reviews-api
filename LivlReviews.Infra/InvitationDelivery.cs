@@ -1,16 +1,17 @@
 using System.Net.Mail;
 using LivlReviews.Domain;
+using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
-using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using InvitationToken = LivlReviews.Infra.Data.InvitationToken;
+using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Infra;
 
 public class InvitationDelivery(UserManager<User> userManager, IRepository<InvitationToken> invitationTokenRepository) : IInvitationDelivery
 {
+    
     public async Task DeliverInvitation(string senderUserId, IUser invitedUser)
     {
         var admin = await userManager.FindByIdAsync(senderUserId);
@@ -24,8 +25,6 @@ public class InvitationDelivery(UserManager<User> userManager, IRepository<Invit
             Email = invitedUser.Email,
             UserName = new MailAddress(invitedUser.Email).User,
             Role = invitedUser.Role,
-            InvitedBy = admin,
-            InvitedById = invitedUser.InvitedById,
         };
         var userResult = await userManager.CreateAsync(newUser);
         
@@ -42,7 +41,11 @@ public class InvitationDelivery(UserManager<User> userManager, IRepository<Invit
             InvitedUserId = newUser.Id,
         };
         
-        invitationTokenRepository.Add(invitationToken);
+        var invitationTokenResult =  invitationTokenRepository.Add(invitationToken);
+
+        User userWithToken = newUser;
+        userWithToken.InvitedByTokenId = invitationTokenResult.Id;
+        await userManager.UpdateAsync(userWithToken);
         
         // TODO : We should send the email from there too :)
     }

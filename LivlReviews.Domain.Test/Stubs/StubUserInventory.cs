@@ -29,8 +29,8 @@ public class StubUserInventory(List<IUser> users) : IUserInventory
         {
             Email = email,
             Role = Role.User,
-            InvitedById = sender.Id,
-            InvitedBy = sender,
+            InvitedByTokenId = sender.InvitedByTokenId,
+            InvitedByToken = sender.InvitedByToken,
         });
     }
 }

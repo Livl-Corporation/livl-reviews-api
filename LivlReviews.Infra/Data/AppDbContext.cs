@@ -94,8 +94,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .HasForeignKey(ps => ps.AdminId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<User>()
-            .HasOne<User>(u => u.InvitedBy as User);
+        modelBuilder.Entity<InvitationToken>()
+            .HasOne(i => i.InvitedUser as User)
+            .WithOne(u => u.InvitedByToken)
+            .HasForeignKey<InvitationToken>(i => i.InvitedUserId);
+
+        modelBuilder.Entity<InvitationToken>()
+            .HasOne(i => i.InvitedByUser as User)
+            .WithMany(u => u.CreatedInvitationTokens)
+            .HasForeignKey(i => i.InvitedByUserId);
+
     }
     
     public DbSet<Product> Products { get; set; }

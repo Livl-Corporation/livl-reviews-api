@@ -60,8 +60,8 @@ public class UserInventory (UserManager<User> userManager) : IUserInventory
         {
             Email = email,
             Role = Role.User,
-            InvitedById = sender.Id,
-            InvitedBy = sender,
+            InvitedByToken = sender.InvitedByToken,
+            InvitedByTokenId = sender.InvitedByTokenId,
         });
     }
 }
