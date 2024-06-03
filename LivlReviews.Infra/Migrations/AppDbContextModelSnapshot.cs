@@ -47,6 +47,38 @@ namespace LivlReviews.Infra.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("LivlReviews.Domain.Entities.InvitationToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InvitedByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvitedUserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvitedByUserId");
+
+                    b.HasIndex("InvitedUserId")
+                        .IsUnique();
+
+                    b.ToTable("InvitationTokens");
+                });
+
             modelBuilder.Entity("LivlReviews.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -120,9 +152,6 @@ namespace LivlReviews.Infra.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("ReceivedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("State")
                         .HasColumnType("integer");
 
@@ -144,65 +173,6 @@ namespace LivlReviews.Infra.Migrations
                     b.ToTable("Requests");
                 });
 
-            modelBuilder.Entity("LivlReviews.Domain.Entities.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(10000)
-                        .HasColumnType("character varying(10000)");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RequestId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RequestId");
-
-                    b.ToTable("Review");
-                });
-
-            modelBuilder.Entity("LivlReviews.Infra.Data.InvitationToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("InvitedByUserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("InvitedUserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("InvitationTokens");
-                });
-
             modelBuilder.Entity("LivlReviews.Infra.Data.User", b =>
                 {
                     b.Property<string>("Id")
@@ -222,8 +192,8 @@ namespace LivlReviews.Infra.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("InvitedById")
-                        .HasColumnType("text");
+                    b.Property<int?>("InvitedByTokenId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -262,8 +232,6 @@ namespace LivlReviews.Infra.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InvitedById");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -351,6 +319,23 @@ namespace LivlReviews.Infra.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("LivlReviews.Domain.Entities.InvitationToken", b =>
+                {
+                    b.HasOne("LivlReviews.Infra.Data.User", "InvitedByUser")
+                        .WithMany("CreatedInvitationTokens")
+                        .HasForeignKey("InvitedByUserId");
+
+                    b.HasOne("LivlReviews.Infra.Data.User", "InvitedUser")
+                        .WithOne("InvitedByToken")
+                        .HasForeignKey("LivlReviews.Domain.Entities.InvitationToken", "InvitedUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InvitedByUser");
+
+                    b.Navigation("InvitedUser");
+                });
+
             modelBuilder.Entity("LivlReviews.Domain.Entities.Product", b =>
                 {
                     b.HasOne("LivlReviews.Domain.Entities.Category", "Category")
@@ -408,26 +393,6 @@ namespace LivlReviews.Infra.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("LivlReviews.Domain.Entities.Review", b =>
-                {
-                    b.HasOne("LivlReviews.Domain.Entities.Request", "Request")
-                        .WithMany()
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Request");
-                });
-
-            modelBuilder.Entity("LivlReviews.Infra.Data.User", b =>
-                {
-                    b.HasOne("LivlReviews.Infra.Data.User", "InvitedBy")
-                        .WithMany()
-                        .HasForeignKey("InvitedById");
-
-                    b.Navigation("InvitedBy");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.HasOne("LivlReviews.Infra.Data.User", null)
@@ -471,6 +436,10 @@ namespace LivlReviews.Infra.Migrations
 
             modelBuilder.Entity("LivlReviews.Infra.Data.User", b =>
                 {
+                    b.Navigation("CreatedInvitationTokens");
+
+                    b.Navigation("InvitedByToken");
+
                     b.Navigation("ReceivedRequests");
 
                     b.Navigation("Stocks");

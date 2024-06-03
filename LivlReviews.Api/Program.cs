@@ -16,7 +16,6 @@ using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using InvitationToken = LivlReviews.Infra.Data.InvitationToken;
 using User = LivlReviews.Infra.Data.User;
 
 var builder = WebApplication.CreateBuilder(args);
