@@ -54,6 +54,7 @@ public class TokenService
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
                 new Claim("userGUID", user.Id),
                 new Claim("role", user.Role.ToString()),
+                new Claim("email", user.Email.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
