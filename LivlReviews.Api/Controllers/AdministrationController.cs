@@ -1,8 +1,7 @@
 using LivlReviews.Api.Attributes;
 using LivlReviews.Domain;
 using LivlReviews.Domain.Administration;
-using LivlReviews.Domain.Enums;
-using LivlReviews.Domain.Users;
+using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
