@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LivlReviews.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240603150555_Initial")]
+    [Migration("20240603201409_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
