@@ -2,9 +2,9 @@ using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 
-namespace LivlReviews.Domain.Test.Stubs;
+namespace LivlReviews.Domain.Test.Fakes;
 
-public class StubRequestInventory(List<ProductStock> stocks, List<Request> requests) : IRequestInventory
+public class FakeRequestInventory(List<ProductStock> stocks, List<Request> requests) : IRequestInventory
 {
     public List<ProductStock> stocks = stocks;
     public List<Request> requests = requests;

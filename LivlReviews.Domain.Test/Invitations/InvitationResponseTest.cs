@@ -2,6 +2,7 @@ using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.mocks;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
@@ -21,7 +22,7 @@ public class InvitationResponseTest
         ];
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory(tokenList);
         IUser user = new FakeUser { Role = Role.User, Email = "admin@email.com", Id = "1", EmailConfirmed = false};
-        StubUserInventory userInventory = new StubUserInventory([user]);
+        FakeUserInventory userInventory = new FakeUserInventory([user]);
 
 
         IInvitationConfirmator invitationConfirmator = new InvitationConfirmator(invitationTokenInventory, userInventory);
@@ -45,7 +46,7 @@ public class InvitationResponseTest
         
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory(tokenList);
         IUser user = new FakeUser { Role = Role.User, Email = "admin@email.com", Id = "1", EmailConfirmed = false};
-        StubUserInventory userInventory = new StubUserInventory([user]);
+        FakeUserInventory userInventory = new FakeUserInventory([user]);
 
 
         IInvitationConfirmator invitationConfirmator = new InvitationConfirmator(invitationTokenInventory, userInventory);

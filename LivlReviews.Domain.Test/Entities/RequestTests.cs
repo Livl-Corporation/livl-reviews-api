@@ -1,5 +1,6 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
 
@@ -34,7 +35,7 @@ public class RequestTests
             AdminId = UsersStub.Admin.Id
         };
     
-        StubRequestInventory requestInventory = new StubRequestInventory([stock], []);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
         
         StockManager stockManager = new StockManager(requestInventory);
         
@@ -69,7 +70,7 @@ public class RequestTests
             AdminId = "1"
         };
     
-        StubRequestInventory requestInventory = new StubRequestInventory([stock], []);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
         
         StockManager stockManager = new StockManager(requestInventory);
         
@@ -116,7 +117,7 @@ public class RequestTests
             State = RequestState.Pending
         };
 
-        StubRequestInventory requestInventory = new StubRequestInventory([stock], [firstRequest, secondRequest]);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest]);
         
         StockManager stockManager = new StockManager(requestInventory);
         

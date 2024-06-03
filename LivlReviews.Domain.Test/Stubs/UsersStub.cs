@@ -1,5 +1,5 @@
-using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Test.Fakes;
 
 namespace LivlReviews.Domain.Test.Stubs;
 

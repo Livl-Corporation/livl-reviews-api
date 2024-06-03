@@ -2,9 +2,9 @@ using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 
-namespace LivlReviews.Domain.Test.Stubs;
+namespace LivlReviews.Domain.Test.Fakes;
 
-public class StubUserInventory(List<IUser> users) : IUserInventory
+public class FakeUserInventory(List<IUser> users) : IUserInventory
 {
     public bool IsValidateUserCalled = false;
     
