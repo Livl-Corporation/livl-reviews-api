@@ -60,11 +60,11 @@ public class ProductController(
             return NotFound();
         }
         
-        if (!stockManager.IsRequestable(product, currentUser.ToDomainUser()))
+        if (!stockManager.IsRequestable(product, currentUser))
         {
             return NotFound();
         }
         
-        return Ok(stockManager.RequestProduct(product, currentUser.ToDomainUser()));
+        return Ok(stockManager.RequestProduct(product, currentUser));
     }
 }

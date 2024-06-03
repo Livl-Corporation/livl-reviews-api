@@ -14,7 +14,7 @@ public class ShouldGetAdminUsers
     public async void Should_Get_All_User_Invited_By_Admin()
     {
         // Arrange
-        List<User> users =
+        List<IUser> users =
         [
             UsersStub.User,
             UsersStub.User2,
@@ -36,7 +36,7 @@ public class ShouldGetAdminUsers
 
         IAdministrationPanel administrationPanel = new AdministrationPanel(invitationTokenInventory, userInventory);
 
-        List<User> expectedResult =
+        List<IUser> expectedResult =
         [
             UsersStub.User,
             UsersStub.User2,

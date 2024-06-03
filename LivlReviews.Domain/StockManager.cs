@@ -7,7 +7,7 @@ namespace LivlReviews.Domain;
 
 public class StockManager(IRequestInventory requestInventory) : IStockManager
 {
-    public bool IsRequestable(Product product, User requester)
+    public bool IsRequestable(Product product, IUser requester)
     {
         if (requester.InvitedById is null)
         {
@@ -17,7 +17,7 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
         return requestInventory.IsRequestable(product.Id, requester.InvitedById);
     }
 
-    public Request RequestProduct(Product product, User requester)
+    public Request RequestProduct(Product product, IUser requester)
     {
         if(!IsRequestable(product, requester))
         {

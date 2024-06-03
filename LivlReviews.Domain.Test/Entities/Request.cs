@@ -17,14 +17,14 @@ public class RequestTest
             URL = "http://product1.com",
         };
         
-        User admin = new User
+        FakeUser admin = new FakeUser()
         {
             Id = "1",
             Email = "User 1",
             InvitedById = null
         };
 
-        User requester = new User
+        FakeUser requester = new FakeUser()
         {
             Id = "2",
             Email = "User 2",
@@ -59,7 +59,7 @@ public class RequestTest
             URL = "http://product1.com",
         };
         
-        User admin = new User
+        IUser admin = new FakeUser
         {
             Id = "1",
             Email = "User 1",

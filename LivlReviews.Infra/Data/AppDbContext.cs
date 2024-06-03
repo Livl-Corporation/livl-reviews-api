@@ -68,13 +68,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Request>()
-            .HasOne(r => r.User)
+            .HasOne<User>(r => r.User as User)
             .WithMany(u => u.SubmittedRequests)
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.SetNull);
-
+            
         modelBuilder.Entity<Request>()
-            .HasOne(r => r.Admin)
+            .HasOne<User>(r => r.Admin as User)
             .WithMany(u => u.ReceivedRequests)
             .HasForeignKey(r => r.AdminId)
             .OnDelete(DeleteBehavior.SetNull);
@@ -89,10 +89,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .OnDelete(DeleteBehavior.NoAction);
         
         modelBuilder.Entity<ProductStock>()
-            .HasOne(ps => ps.Admin)
+            .HasOne<User>(ps => ps.Admin as User)
             .WithMany(u => u.Stocks)
             .HasForeignKey(ps => ps.AdminId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<User>()
+            .HasOne<User>(u => u.InvitedBy as User);
     }
     
     public DbSet<Product> Products { get; set; }

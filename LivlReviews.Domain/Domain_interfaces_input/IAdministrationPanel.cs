@@ -4,8 +4,8 @@ namespace LivlReviews.Domain;
 
 public interface IAdministrationPanel
 {
-    public Task<List<User?>> GetAdminUsers(string adminUserId);
-    public Task<User> EnableUser(string adminUserId, string userId);
-    public Task<User> DisableUser(string adminUserId, string userId);
+    public Task<List<IUser?>> GetAdminUsers(string adminUserId);
+    public Task<IUser> EnableUser(string adminUserId, string userId);
+    public Task<IUser> DisableUser(string adminUserId, string userId);
 
 }
