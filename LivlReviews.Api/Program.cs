@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using LivlReviews.Api.Services;
 using LivlReviews.Domain;
 using LivlReviews.Domain.Domain_interfaces_input;
+using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using LivlReviews.Email;
+using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories;
 using LivlReviews.Infra.Repositories.Interfaces;
@@ -64,7 +66,11 @@ builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<IPaginatedRepository<Product>, PaginatedEntityRepository<Product>>();
 builder.Services.AddScoped<IRepository<Category>, EntityRepository<Category>>();
 builder.Services.AddScoped<IRepository<InvitationToken>, EntityRepository<InvitationToken>>();
+builder.Services.AddScoped<IRepository<Request>, EntityRepository<Request>>();
+builder.Services.AddScoped<IRepository<ProductStock>, EntityRepository<ProductStock>>();
+builder.Services.AddScoped<IRequestInventory, RequestInventory>();
 builder.Services.AddScoped<IStockManager, StockManager>();
+
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {

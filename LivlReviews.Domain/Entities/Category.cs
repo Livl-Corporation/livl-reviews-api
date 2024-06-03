@@ -11,7 +11,7 @@ public class Category
     public List<Category> Children { get; set; }
     public Category? Parent;
     public int? ParentId { get; set; }
-    public List<Product> Products { get; set; }
+    public List<Product> Products;
     
     public static bool Can(Role role, Operation operation)
     {

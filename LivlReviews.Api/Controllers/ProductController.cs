@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using LivlReviews.Domain;
 using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Models;
@@ -61,7 +59,7 @@ public class ProductController(
         {
             return NotFound();
         }
-
+        
         if (!stockManager.IsRequestable(product, currentUser.ToDomainUser()))
         {
             return NotFound();
