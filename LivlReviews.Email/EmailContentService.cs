@@ -2,16 +2,14 @@
 
 public class EmailContentService : IEmailContentService
 {
-    public string GenerateAccountInvitationContent(string name, string activationLink)
+    public string GenerateAccountInvitationContent(string activationLink)
     {
         return $@"
-            <h1>Welcome to LivlReviews!</h1>
-            <p>Dear {name},</p>
-            <p>We are excited to have you on board. To get started with LivlReviews, please click the link below to set your password and activate your account.</p>
-            <a href='{activationLink}'>Activate your account</a>
-            <p>If you have any questions, feel free to reply to this email.</p>
-            <p>Best,</p>
-            <p>The LivlReviews Team</p>
+            <h1>Bienvenue sur LivlReviews!</h1>
+            <p>Pour confirmer la création de votre compte, cliquez sur le lien ci-dessous afin de définir votre mot de passe.</p>
+            <a href='{activationLink}'>Activer mon compte</a>
+            <p>Force à vous,</p>
+            <p>Livl Corporation</p>
         ";
     }
 }

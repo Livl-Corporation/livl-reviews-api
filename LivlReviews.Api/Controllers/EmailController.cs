@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 [ApiController]
 [Route("[controller]")]
-public class EmailController(EmailService emailService) : ControllerBase
+public class EmailController(EmaiManager emaiManager) : ControllerBase
 {
     //[Authorize]
     [HttpPost("send-invitation-email")]
@@ -15,7 +15,7 @@ public class EmailController(EmailService emailService) : ControllerBase
     {
         try
         {
-            await emailService.SendAccountInvitationEmailAsync(recipients);
+            await emaiManager.SendAccountInvitationEmailAsync(recipients);
         
             return Ok("Email sent successfully");
         } 

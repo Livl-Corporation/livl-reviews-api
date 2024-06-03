@@ -2,5 +2,5 @@
 
 public interface IEmailContentService
 {
-    string GenerateAccountInvitationContent(string name, string activationLink);
+    string GenerateAccountInvitationContent(string activationLink);
 }

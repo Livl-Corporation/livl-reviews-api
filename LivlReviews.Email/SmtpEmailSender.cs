@@ -4,15 +4,16 @@ using Microsoft.Extensions.Options;
 
 namespace LivlReviews.Email;
 
-public class SmtpEmailSender(IOptions<SmtpSettings> smtpSettings) : IEmailSender
+public class SmtpEmailSender(IOptions<SmtpSettings> smtpSettings, string password) : IEmailSender
 {
     private readonly SmtpSettings _smtpSettings = smtpSettings.Value;
+    private readonly string password = password;
 
     public async Task SendEmailAsync(string email, string subject, string message)
     {
         using var client = new SmtpClient(_smtpSettings.Server, _smtpSettings.Port)
         {
-            Credentials = new NetworkCredential(_smtpSettings.Username, _smtpSettings.Password),
+            Credentials = new NetworkCredential(_smtpSettings.Username, password),
             EnableSsl = _smtpSettings.EnableSsl
         };
 
