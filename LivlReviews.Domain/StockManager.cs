@@ -17,7 +17,7 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
         return requestInventory.IsRequestable(product.Id, requester.InvitedByToken.InvitedByUserId);
     }
 
-    public Request RequestProduct(Product product, IUser requester)
+    public Request RequestProduct(Product product, IUser requester, string? message = null)
     {
         if(!IsRequestable(product, requester))
         {
@@ -29,6 +29,7 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
             ProductId = product.Id,
             AdminId = requester.InvitedByToken.InvitedByUserId,
             UserId = requester.Id,
+            UserMessage = message,
             State = RequestState.Pending
         };
         
@@ -42,15 +43,17 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
         requestInventory.UpdateRequestState(request, state);
     }
 
-    public Request ApproveRequest(Request request, IUser requester)
+    public Request ApproveRequest(Request request, IUser requester, string? message = null)
     {
         List<Request> requests = requestInventory.GetSimilarPendingRequests(request);
 
         foreach (Request req in requests)
         {
+            req.AdminMessage = "[SYSTEM] Request was rejected because a similar request from another user was approved.";
             requestInventory.RejectRequest(req);
         }
         
+        request.AdminMessage = message;
         return requestInventory.ApproveRequest(request);
     }
 }

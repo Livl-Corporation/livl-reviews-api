@@ -16,6 +16,9 @@ public class Request : ICreatedDate, IUpdatedDate
     public string AdminId { get; set; }
     public IUser Admin { get; set; }
     
+    public string? UserMessage { get; set; }
+    public string? AdminMessage { get; set; }
+    
     public RequestState State { get; set; }
     
     public DateTime CreatedAt { get; set; }

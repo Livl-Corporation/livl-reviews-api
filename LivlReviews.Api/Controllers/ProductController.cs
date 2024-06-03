@@ -1,4 +1,5 @@
 using LivlReviews.Api.Attributes;
+using LivlReviews.Api.Models;
 using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Models;
@@ -47,7 +48,7 @@ public class ProductController(
     
     [HttpPost("{id}/request")]
     [UserIdClaim]
-    public async Task<ActionResult<Request>> RequestProduct(int id)
+    public async Task<ActionResult<Request>> RequestProduct(int id, [FromBody] MessageRequest messageRequest)
     {
         var currentUserId = HttpContext.Items["UserId"] as string;
         if(currentUserId is null) return Unauthorized();
@@ -69,6 +70,6 @@ public class ProductController(
             return NotFound();
         }
         
-        return Ok(stockManager.RequestProduct(product, currentUser));
+        return Ok(stockManager.RequestProduct(product, currentUser, messageRequest.Message));
     }
 }
