@@ -1,5 +1,4 @@
 using LivlReviews.Api.Attributes;
-using LivlReviews.Domain;
 using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
@@ -79,6 +78,37 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
         }
 
         stockManager.ApproveRequest(request, currentUser);
+        
+        return Ok(request);
+    }
+    
+    [HttpPost("{id}/reject")]
+    [UserIdClaim]
+    public async Task<ActionResult<Request>> RejectRequest(int id)
+    {
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
+        var currentUser = await userManager.FindByIdAsync(currentUserId);
+        if(currentUser is null)
+        {
+            return Unauthorized();
+        }
+
+        if (!Domain.Entities.Request.Can(currentUser.Role, Operation.UPDATE))
+        {
+            return Forbid();
+        }
+        
+        Request request = repository.GetById(id);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        request.State = RequestState.Rejected;
+
+        repository.Update(request);
         
         return Ok(request);
     }
