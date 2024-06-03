@@ -68,8 +68,11 @@ builder.Services.AddScoped<IRepository<Category>, EntityRepository<Category>>();
 builder.Services.AddScoped<IRepository<InvitationToken>, EntityRepository<InvitationToken>>();
 builder.Services.AddScoped<IRepository<Request>, EntityRepository<Request>>();
 builder.Services.AddScoped<IRepository<ProductStock>, EntityRepository<ProductStock>>();
+builder.Services.AddScoped<IRepository<Review>, EntityRepository<Review>>();
 builder.Services.AddScoped<IRequestInventory, RequestInventory>();
 builder.Services.AddScoped<IStockManager, StockManager>();
+builder.Services.AddScoped<IReviewManager, ReviewManager>();
+builder.Services.AddScoped<IReviewInventory, ReviewInventory>();
 
 
 builder.Services.AddControllers().AddJsonOptions(opt =>

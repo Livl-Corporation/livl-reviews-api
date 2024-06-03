@@ -15,4 +15,9 @@ public class RequestInventory(IRepository<Request> requestRepository, IRepositor
     {
         return requestRepository.Add(request);
     }
+    
+    public void UpdateRequestState(Request request)
+    {
+        requestRepository.Update(request);
+    }
 }

@@ -14,4 +14,9 @@ public class StubRequestInventory(ProductStock stock) : IRequestInventory
     {
         return request;
     }
+    
+    public void UpdateRequestState(Request request)
+    {
+        request.State = request.State;
+    }
 }

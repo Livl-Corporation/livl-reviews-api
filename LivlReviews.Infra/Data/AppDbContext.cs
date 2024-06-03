@@ -1,3 +1,4 @@
+using LivlReviews.Domain;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -96,6 +97,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
 
         modelBuilder.Entity<User>()
             .HasOne<User>(u => u.InvitedBy as User);
+
+        modelBuilder.Entity<Review>()
+            .HasOne<Request>(r => r.Request);
     }
     
     public DbSet<Product> Products { get; set; }

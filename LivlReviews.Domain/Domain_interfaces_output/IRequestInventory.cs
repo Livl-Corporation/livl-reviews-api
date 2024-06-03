@@ -6,4 +6,5 @@ public interface IRequestInventory
 {
     bool IsRequestable(int productId, string adminId);
     Request CreateProductRequest(Request request);
+    void UpdateRequestState(Request request);
 }

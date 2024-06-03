@@ -21,6 +21,8 @@ public class Request : ICreatedDate, IUpdatedDate
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     
+    public DateTime? ReceivedAt { get; set; }
+    
     public static bool Can(Role role, Operation operation)
     {
         switch (operation)
