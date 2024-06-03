@@ -15,10 +15,7 @@ public record User
     public List<Request> ReceivedRequests { get; set; } = new List<Request>();
     public List<ProductStock> Stocks { get; set; } = new List<ProductStock>();
     
-    public bool IsAdmin()
-    {
-        return this.Role == Role.Admin;
-    }
+    public bool IsAdmin => Role == Role.Admin;
     
     public static bool Can(Role role, Operation operation)
     {
