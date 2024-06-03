@@ -113,5 +113,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
     public DbSet<Category> Categories { get; set; }
     public DbSet<InvitationToken> InvitationTokens { get; set; }
     public DbSet<Request> Requests { get; set; }
+    public DbSet<Review> Reviews { get; set; }
     public DbSet<ProductStock> Stocks { get; set; }
 }
