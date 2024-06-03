@@ -1,4 +1,3 @@
-using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 
@@ -7,6 +6,8 @@ namespace LivlReviews.Infra.Data;
 public class User : IdentityUser
 {
     public Role Role { get; set; }
+    public string? InvitedById { get; set; }
+    public User? InvitedBy { get; set; }
     
     public InvitationToken? InvitedByToken { get; set; }
     public int? InvitedByTokenId { get; set; }
@@ -20,6 +21,8 @@ public class User : IdentityUser
             Email = Email,
             Role = Role,
             isConfirmed = EmailConfirmed,
+            InvitedById = InvitedById,
+            InvitedBy = InvitedBy?.ToDomainUser(),
         };
     }
 }
