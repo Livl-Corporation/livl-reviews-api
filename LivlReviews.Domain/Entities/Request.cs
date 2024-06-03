@@ -33,4 +33,9 @@ public class Request : ICreatedDate, IUpdatedDate
                 return role >= Role.Admin;
         }
     }
+
+    public string GetRelevantUserId(IUser user)
+    {
+        return user.IsAdmin ? AdminId : UserId;
+    }
 }

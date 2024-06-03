@@ -33,7 +33,7 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
         PaginationParameters paginationParameters = new PaginationParameters { page = page, pageSize = pageSize };
         
         PaginatedResult<Request> requests = repository.GetPaginated(
-            request => currentUser.IsAdmin ? request.AdminId == currentUserId : request.UserId == currentUserId,
+            request => request.GetRelevantUserId(currentUser) == currentUserId,
             paginationParameters,
             ["User", "Product"]
         );
