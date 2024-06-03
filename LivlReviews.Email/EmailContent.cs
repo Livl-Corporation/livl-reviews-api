@@ -1,6 +1,8 @@
-﻿namespace LivlReviews.Email;
+﻿using LivlReviews.Email.Interfaces;
 
-public class EmailContentService : IEmailContentService
+namespace LivlReviews.Email;
+
+public class EmailContent : IEmailContent
 {
     public string GenerateAccountInvitationContent(string activationLink)
     {

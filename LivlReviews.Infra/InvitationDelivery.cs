@@ -1,16 +1,15 @@
 using System.Net.Mail;
-using LivlReviews.Domain;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Domain_interfaces_output;
-using LivlReviews.Domain.Entities;
 using LivlReviews.Email;
+using LivlReviews.Email.Interfaces;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Infra;
 
-public class InvitationDelivery(UserManager<User> userManager, IRepository<InvitationToken> invitationTokenRepository, IEmailSender emailSender,IEmailContentService emailContentService) : IInvitationDelivery
+public class InvitationDelivery(UserManager<User> userManager, IRepository<InvitationToken> invitationTokenRepository, IEmailSender emailSender,IEmailContent emailContent) : IInvitationDelivery
 {
     
     public async Task DeliverInvitation(string senderUserId, IUser invitedUser)
@@ -48,7 +47,7 @@ public class InvitationDelivery(UserManager<User> userManager, IRepository<Invit
         userWithToken.InvitedByTokenId = invitationTokenResult.Id;
         await userManager.UpdateAsync(userWithToken);
         
-        var emailService = new EmaiManager(emailSender, emailContentService);
+        var emailService = new EmaiManager(emailSender, emailContent);
         var recipientEmailInvitations = new List<RecipientEmailInvitation>
         {
             new RecipientEmailInvitation

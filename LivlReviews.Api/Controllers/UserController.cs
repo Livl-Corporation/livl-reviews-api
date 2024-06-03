@@ -9,7 +9,7 @@ using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Invitation;
-using LivlReviews.Email;
+using LivlReviews.Email.Interfaces;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +22,7 @@ namespace LivlReviews.Api.Controllers;
 
 [ApiController]
 [Route("/[controller]")]
-public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository, IEmailSender emailSender, IEmailContentService emailContentService) : ControllerBase
+public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository, IEmailSender emailSender, IEmailContent emailContent) : ControllerBase
 {
 
     [HttpPost]
@@ -39,7 +39,7 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         try
         {
             IInvitationSender invitationSender = new InvitationSender(
-                new InvitationDelivery(userManager, invitationTokenRepository, emailSender, emailContentService),
+                new InvitationDelivery(userManager, invitationTokenRepository, emailSender, emailContent),
                 new UserInventory(userManager)
             );
             await invitationSender.SendInvitation(currentUserId, request.Email);

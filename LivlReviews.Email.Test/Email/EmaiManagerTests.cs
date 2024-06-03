@@ -1,4 +1,4 @@
-﻿using LivlReviews.Email;
+﻿using LivlReviews.Email.Interfaces;
 using Moq;
 using Xunit;
 
@@ -7,13 +7,13 @@ namespace LivlReviews.Email.Test.Email;
 public class EmaiManagerTests
 {
     private readonly Mock<IEmailSender> _emailSenderMock;
-    private readonly Mock<IEmailContentService> _emailContentServiceMock;
+    private readonly Mock<IEmailContent> _emailContentServiceMock;
     private readonly EmaiManager _emaiManager;
 
     public EmaiManagerTests()
     {
         _emailSenderMock = new Mock<IEmailSender>();
-        _emailContentServiceMock = new Mock<IEmailContentService>();
+        _emailContentServiceMock = new Mock<IEmailContent>();
         _emaiManager = new EmaiManager(_emailSenderMock.Object, _emailContentServiceMock.Object);
     }
 

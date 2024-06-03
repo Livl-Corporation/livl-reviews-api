@@ -1,14 +1,16 @@
-﻿namespace LivlReviews.Email;
+﻿using LivlReviews.Email.Interfaces;
 
-public class EmaiManager(IEmailSender emailSender, IEmailContentService emailContentService)
+namespace LivlReviews.Email;
+
+public class EmaiManager(IEmailSender emailSender, IEmailContent emailContent)
 {
     public async Task SendAccountInvitationEmailAsync(IEnumerable<RecipientEmailInvitation> recipientEmailInvitations)
     {
-        string subject = "Vous êtes invité à rejoindre LivlReviews!";
+        var subject = "Vous êtes invité à rejoindre LivlReviews!";
 
         foreach (var recipient in recipientEmailInvitations)
         {
-            string message = emailContentService.GenerateAccountInvitationContent(recipient.ActivationLink);
+            var message = emailContent.GenerateAccountInvitationContent(recipient.ActivationLink);
             await emailSender.SendEmailAsync(recipient.Email, subject, message);
         }
     }

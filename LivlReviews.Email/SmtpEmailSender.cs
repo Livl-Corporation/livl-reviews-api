@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using LivlReviews.Email.Interfaces;
 using Microsoft.Extensions.Options;
 
 namespace LivlReviews.Email;
@@ -7,7 +8,6 @@ namespace LivlReviews.Email;
 public class SmtpEmailSender(IOptions<SmtpSettings> smtpSettings, string password) : IEmailSender
 {
     private readonly SmtpSettings _smtpSettings = smtpSettings.Value;
-    private readonly string password = password;
 
     public async Task SendEmailAsync(string email, string subject, string message)
     {
