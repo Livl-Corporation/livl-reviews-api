@@ -5,7 +5,7 @@ using LivlReviews.Infra.Repositories.Interfaces;
 
 namespace LivlReviews.Infra;
 
-public class ReviewInventory(IRepository<Review> reviewRepository, IRepository<Request> requestRepository) : IReviewInventory
+public class ReviewInventory(IRepository<Review> reviewRepository, IPaginatedRepository<Request> requestRepository) : IReviewInventory
 {
     public bool IsReviewable(int requestId)
     {
