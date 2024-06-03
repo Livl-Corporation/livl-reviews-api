@@ -6,6 +6,8 @@ namespace LivlReviews.Infra.Data;
 public class User : IdentityUser
 {
     public Role Role { get; set; }
+    public string? InvitedById { get; set; }
+    public User? InvitedBy { get; set; }
     
     public Domain.Entities.User ToDomainUser()
     {
@@ -13,7 +15,9 @@ public class User : IdentityUser
         {
             Id = Id,
             Email = Email,
-            Role = Role
+            Role = Role,
+            InvitedById = InvitedById,
+            InvitedBy = InvitedBy?.ToDomainUser(),
         };
     }
 }

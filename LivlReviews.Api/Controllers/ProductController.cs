@@ -1,8 +1,11 @@
+using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Models;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Api.Controllers;
 
@@ -10,12 +13,15 @@ namespace LivlReviews.Api.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class ProductController(
-    IPaginatedRepository<Product> repository
+    IPaginatedRepository<Product> repository,
+    IStockManager stockManager,
+    UserManager<User> userManager
     ) : ControllerBase
 {
     [HttpGet]
     public ActionResult<PaginatedResult<Product>> GetProducts(int page = 1, int pageSize = 10, string search = "", int? category = null)
     {
+        // TODO : check that only the products from the admin who invite the user is returned
         PaginationParameters paginationParameters = new PaginationParameters { page = page, pageSize = pageSize };
         
         PaginatedResult<Product> products = repository.GetPaginated(
@@ -39,4 +45,26 @@ public class ProductController(
         return Ok(product);
     }
     
+    [HttpPost("{id}/request")]
+    public async Task<ActionResult<Request>> RequestProduct(int id)
+    {
+        var currentUser = await userManager.GetUserAsync(User);
+        if(currentUser is null)
+        {
+            return Unauthorized();
+        }
+        
+        var product = repository.GetById(id);        
+        if(product is null)
+        {
+            return NotFound();
+        }
+        
+        if (!stockManager.IsRequestable(product, currentUser.ToDomainUser()))
+        {
+            return NotFound();
+        }
+        
+        return Ok(stockManager.RequestProduct(product, currentUser.ToDomainUser()));
+    }
 }

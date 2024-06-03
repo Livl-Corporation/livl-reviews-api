@@ -60,9 +60,44 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
         modelBuilder.Entity<Category>()
             .HasIndex(c => c.Name)
             .IsUnique();
+
+        modelBuilder.Entity<Request>()
+            .HasOne(r => r.Product)
+            .WithMany(p => p.Requests)
+            .HasForeignKey(r => r.ProductId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Request>()
+            .HasOne(r => r.User)
+            .WithMany(u => u.SubmittedRequests)
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Request>()
+            .HasOne(r => r.Admin)
+            .WithMany(u => u.ReceivedRequests)
+            .HasForeignKey(r => r.AdminId)
+            .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<ProductStock>()
+            .HasKey(ps => new { ps.ProductId, ps.AdminId });
+
+        modelBuilder.Entity<ProductStock>()
+            .HasOne(ps => ps.Product)
+            .WithMany(p => p.Stocks)
+            .HasForeignKey(ps => ps.ProductId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<ProductStock>()
+            .HasOne(ps => ps.Admin)
+            .WithMany(u => u.Stocks)
+            .HasForeignKey(ps => ps.AdminId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
     
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<InvitationToken> InvitationTokens { get; set; }
+    public DbSet<Request> Requests { get; set; }
+    public DbSet<ProductStock> Stocks { get; set; }
 }

@@ -1,6 +1,7 @@
+using LivlReviews.Domain.Domain_interfaces_input;
+using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
-using LivlReviews.Domain.Users;
 
 namespace LivlReviews.Domain.Invitation;
 
@@ -18,7 +19,7 @@ public class InvitationSender(IInvitationDelivery invitationDelivery, IUserInven
             throw new Exception("Only admins can send invitations");
         }
         
-        User invitedUser = new User { Email = email, Role = Role.User};
+        User invitedUser = new User { Email = email, Role = Role.User, InvitedById = senderUserId, InvitedBy = sender };
         
         await _invitationDelivery.DeliverInvitation(senderUserId, invitedUser);
     }

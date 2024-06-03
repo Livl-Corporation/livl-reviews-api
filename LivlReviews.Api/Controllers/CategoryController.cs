@@ -10,8 +10,8 @@ namespace LivlReviews.Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
-public class CategoriesController(IRepository<Category> categoriesRepository, UserManager<User> userManager) : ControllerBase
+[Route("[controller]")]
+public class CategoryController(IRepository<Category> categoriesRepository, UserManager<User> userManager) : ControllerBase
 {
     [HttpGet]
     public ActionResult<IEnumerable<Category>> GetAllCategories()

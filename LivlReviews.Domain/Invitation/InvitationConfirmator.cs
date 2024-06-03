@@ -1,4 +1,5 @@
-using LivlReviews.Domain.Users;
+using LivlReviews.Domain.Domain_interfaces_input;
+using LivlReviews.Domain.Domain_interfaces_output;
 
 namespace LivlReviews.Domain;
 
