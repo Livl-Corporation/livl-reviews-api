@@ -1,4 +1,4 @@
-﻿namespace LivlReviews.Email;
+﻿namespace LivlReviews.Email.Interfaces;
 
 public interface IEmailSender
 {

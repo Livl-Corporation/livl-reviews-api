@@ -11,11 +11,13 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using LivlReviews.Email;
+using LivlReviews.Email.Interfaces;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using User = LivlReviews.Infra.Data.User;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -125,10 +127,13 @@ builder.Services.AddAuthentication(options =>
     });
 
 
-builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
-builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
-builder.Services.AddTransient<EmailService>();
-builder.Services.AddTransient<IEmailContentService, EmailContentService>();
+var smtpSettings = builder.Configuration.GetSection("SmtpSettings");
+var smtpPassword = builder.Configuration["Smtp:Password"];
+
+builder.Services.Configure<SmtpSettings>(smtpSettings);
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>(provider => new SmtpEmailSender(provider.GetRequiredService<IOptions<SmtpSettings>>(), smtpPassword));
+builder.Services.AddTransient<EmaiManager>();
+builder.Services.AddTransient<IEmailContent, EmailContent>();
 
 var app = builder.Build();
 

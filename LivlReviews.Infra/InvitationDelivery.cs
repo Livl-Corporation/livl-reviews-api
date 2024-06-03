@@ -1,15 +1,15 @@
 using System.Net.Mail;
-using LivlReviews.Domain;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Domain_interfaces_output;
-using LivlReviews.Domain.Entities;
+using LivlReviews.Email;
+using LivlReviews.Email.Interfaces;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Infra;
 
-public class InvitationDelivery(UserManager<User> userManager, IRepository<InvitationToken> invitationTokenRepository) : IInvitationDelivery
+public class InvitationDelivery(UserManager<User> userManager, IRepository<InvitationToken> invitationTokenRepository, IEmailSender emailSender,IEmailContent emailContent) : IInvitationDelivery
 {
     
     public async Task DeliverInvitation(string senderUserId, IUser invitedUser)
@@ -47,6 +47,17 @@ public class InvitationDelivery(UserManager<User> userManager, IRepository<Invit
         userWithToken.InvitedByTokenId = invitationTokenResult.Id;
         await userManager.UpdateAsync(userWithToken);
         
-        // TODO : We should send the email from there too :)
+        var emailService = new EmaiManager(emailSender, emailContent);
+        var recipientEmailInvitations = new List<RecipientEmailInvitation>
+        {
+            new RecipientEmailInvitation
+            {
+                Email = newUser.Email,
+                // TODO : get real app url
+                ActivationLink = $"https://localhost:3000/auth/password?token={randomToken}"
+            }
+        };
+        await emailService.SendAccountInvitationEmailAsync(recipientEmailInvitations);
+        
     }
 }

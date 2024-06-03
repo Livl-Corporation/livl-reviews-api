@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\LivlReviews.Domain\LivlReviews.Domain.csproj" />
+        <ProjectReference Include="..\LivlReviews.Email\LivlReviews.Email.csproj" />
     </ItemGroup>
 
     <ItemGroup>
