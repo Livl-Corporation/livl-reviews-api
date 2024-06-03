@@ -23,7 +23,7 @@ namespace LivlReviews.Api.Controllers;
 
 [ApiController]
 [Route("/[controller]")]
-public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository) : ControllerBase
+public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository, IRepository<User> userRepository) : ControllerBase
 {
 
     [HttpPost]
@@ -41,7 +41,7 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         {
             IInvitationSender invitationSender = new InvitationSender(
                 new InvitationTokenInventory(invitationTokenRepository),
-                new UserInventory(userManager)
+                new UserInventory(userManager, userRepository)
             );
             await invitationSender.SendInvitation(currentUserId, request.Email);
         } catch (Exception e)
@@ -63,7 +63,7 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         {
             IInvitationConfirmator invitationConfirmator = new InvitationConfirmator(
                 new InvitationTokenInventory(invitationTokenRepository),
-                new UserInventory(userManager)
+                new UserInventory(userManager, userRepository)
             );
             await invitationConfirmator.ConfirmUser(request.Token, request.Password);
 
@@ -84,7 +84,7 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         if (currentUserId is null) return Unauthorized();
 
         IInvitationTokenInventory invitationTokenInventory = new InvitationTokenInventory(invitationTokenRepository);
-        IUserInventory userInventory = new UserInventory(userManager);
+        IUserInventory userInventory = new UserInventory(userManager, userRepository);
         IAdministrationPanel administrationPanel = new AdministrationPanel(invitationTokenInventory, userInventory);
 
         try

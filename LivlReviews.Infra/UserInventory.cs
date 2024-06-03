@@ -1,13 +1,15 @@
+using System.Net.Mail;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Exceptions;
+using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace LivlReviews.Infra;
 
-public class UserInventory (UserManager<User> userManager) : IUserInventory
+public class UserInventory (UserManager<User> userManager, IRepository<User> userRepository) : IUserInventory
 {
     
     public async Task<IUser?> GetUserById(string userId)
@@ -66,15 +68,26 @@ public class UserInventory (UserManager<User> userManager) : IUserInventory
         User newUser = new User
         {
             Email = email,
+            UserName = email,
             Role = Role.User,
             InvitedByToken = sender.InvitedByToken,
             InvitedByTokenId = sender.InvitedByTokenId,
         };
+
+        if (password is not null)
+        {
+            var res = await userManager.CreateAsync(
+                newUser,
+                password
+            );
+        }
+        else
+        {
+            var res = await userManager.CreateAsync(
+                newUser
+            );
+        }
         
-        await userManager.CreateAsync(
-            newUser,
-            password ?? string.Empty
-        );
     }
 
     public Task<IUser> InstanciateUserObject(IUser sender, string email)

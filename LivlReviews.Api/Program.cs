@@ -64,11 +64,13 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<IPaginatedRepository<Product>, PaginatedEntityRepository<Product>>();
 builder.Services.AddScoped<IRepository<Category>, EntityRepository<Category>>();
+builder.Services.AddScoped<IRepository<User>, EntityRepository<User>>();
 builder.Services.AddScoped<IRepository<InvitationToken>, EntityRepository<InvitationToken>>();
 builder.Services.AddScoped<IRepository<Request>, EntityRepository<Request>>();
 builder.Services.AddScoped<IRepository<ProductStock>, EntityRepository<ProductStock>>();
 builder.Services.AddScoped<IRequestInventory, RequestInventory>();
 builder.Services.AddScoped<IStockManager, StockManager>();
+builder.Services.AddScoped<UserManager<User>, UserManager<User>>();
 
 
 builder.Services.AddControllers().AddJsonOptions(opt =>

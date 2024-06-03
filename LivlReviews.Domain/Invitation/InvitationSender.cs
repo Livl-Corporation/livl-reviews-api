@@ -18,7 +18,7 @@ public class InvitationSender(IInvitationTokenInventory invitationTokenInventory
             throw new UserNotFoundException();
         }
         
-        if(sender.IsAdmin is false)
+        if(!sender.IsAdmin)
         {
             throw new UserNotAdministratorException();
         }
@@ -30,6 +30,7 @@ public class InvitationSender(IInvitationTokenInventory invitationTokenInventory
             throw new UserAlreadyInvitedException();
         }
 
+        
         await userInventory.CreateUser(sender, email);
         var newUser = await userInventory.GetUserByEmail(email);
         if(newUser is null) throw new UserNotFoundException();
