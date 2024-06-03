@@ -3,8 +3,11 @@ using LivlReviews.Api.Attributes;
 using LivlReviews.Api.Models;
 using LivlReviews.Api.Services;
 using LivlReviews.Domain;
+using LivlReviews.Domain.Administration;
+using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Invitation;
+using LivlReviews.Domain.Users;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using Microsoft.AspNetCore.Identity;
@@ -13,25 +16,15 @@ using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using InvitationToken = LivlReviews.Infra.Data.InvitationToken;
+using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Api.Controllers;
 
 [ApiController]
 [Route("/[controller]")]
-public class UsersController : ControllerBase
+public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository) : ControllerBase
 {
-    private readonly UserManager<User> _userManager;
-    private readonly AppDbContext _context;
-    private readonly TokenService _tokenService;
-    private readonly IRepository<InvitationToken> _invitationTokenRepository;
-
-    public UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository)
-    {
-        _userManager = userManager;
-        _context = context;
-        _tokenService = tokenService;
-        _invitationTokenRepository = invitationTokenRepository;
-    }
 
     [HttpPost]
     [Route("invite")]
@@ -47,8 +40,8 @@ public class UsersController : ControllerBase
         try
         {
             IInvitationSender invitationSender = new InvitationSender(
-                new InvitationDelivery(_userManager, _invitationTokenRepository),
-                new UserInventory(_userManager)
+                new InvitationDelivery(userManager, invitationTokenRepository),
+                new UserInventory(userManager)
             );
             await invitationSender.SendInvitation(currentUserId, request.Email);
         } catch (Exception e)
@@ -69,8 +62,8 @@ public class UsersController : ControllerBase
         try
         {
             IInvitationConfirmator invitationConfirmator = new InvitationConfirmator(
-                new InvitationTokenInventory(_invitationTokenRepository),
-                new UserInventory(_userManager)
+                new InvitationTokenInventory(invitationTokenRepository),
+                new UserInventory(userManager)
             );
             await invitationConfirmator.ConfirmUser(request.Token, request.Password);
 
@@ -82,6 +75,28 @@ public class UsersController : ControllerBase
         }
     }
     
+    [HttpGet("users")]
+    [Authorize]
+    [UserIdClaim]
+    public async Task<IActionResult> GetUsers()
+    {
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if (currentUserId is null) return Unauthorized();
+
+        IInvitationTokenInventory invitationTokenInventory = new InvitationTokenInventory(invitationTokenRepository);
+        IUserInventory userInventory = new UserInventory(userManager);
+        IAdministrationPanel administrationPanel = new AdministrationPanel(invitationTokenInventory, userInventory);
+
+        try
+        {
+            var adminUsers = await administrationPanel.GetAdminUsers(currentUserId);
+            return Ok(adminUsers);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
     
     [HttpPost]
     [Route("register")]
@@ -92,7 +107,7 @@ public class UsersController : ControllerBase
         
         string userName = new MailAddress(request.Email).User;
         
-        var result = await _userManager.CreateAsync(
+        var result = await userManager.CreateAsync(
             new User { Email = request.Email, UserName = userName, Role = Role.User },
             request.Password!
         );
@@ -118,7 +133,7 @@ public class UsersController : ControllerBase
         if (String.IsNullOrEmpty(request.Email)) return BadRequest("Email is required");
         if (String.IsNullOrEmpty(request.Password)) return BadRequest("Password is required");
 
-        var managedUser = await _userManager.FindByEmailAsync(request.Email!);
+        var managedUser = await userManager.FindByEmailAsync(request.Email!);
         if (managedUser == null)
         {
             return BadRequest("Bad credentials");
@@ -126,21 +141,21 @@ public class UsersController : ControllerBase
 
         if (managedUser.EmailConfirmed is false) return BadRequest("Bad credentials");
 
-        var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password!);
+        var isPasswordValid = await userManager.CheckPasswordAsync(managedUser, request.Password!);
         if (!isPasswordValid)
         {
             return BadRequest("Bad credentials");
         }
 
-        var userInDb = _context.Users.FirstOrDefault(u => u.Email == request.Email);
+        var userInDb = context.Users.FirstOrDefault(u => u.Email == request.Email);
         
         if (userInDb is null)
         {
             return Unauthorized();
         }
         
-        var accessToken = _tokenService.CreateToken(userInDb);
-        await _context.SaveChangesAsync();
+        var accessToken = tokenService.CreateToken(userInDb);
+        await context.SaveChangesAsync();
         
         return Ok(new LoginResponse
         {

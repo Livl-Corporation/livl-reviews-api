@@ -60,6 +60,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
         modelBuilder.Entity<Category>()
             .HasIndex(c => c.Name)
             .IsUnique();
+
+        modelBuilder.Entity<InvitationToken>()
+            .HasOne(i => i.InvitedUser)
+            .WithOne(u => u.InvitedByToken)
+            .HasForeignKey<InvitationToken>(i => i.InvitedUserId);
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.CreatedInvitationTokens)
+            .WithOne(i => i.InvitedByUser)
+            .HasForeignKey(i => i.InvitedByUserId);
     }
     
     public DbSet<Product> Products { get; set; }

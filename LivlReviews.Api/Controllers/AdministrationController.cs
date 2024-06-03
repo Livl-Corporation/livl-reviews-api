@@ -1,14 +1,16 @@
 using LivlReviews.Api.Attributes;
 using LivlReviews.Domain;
 using LivlReviews.Domain.Administration;
+using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Users;
 using LivlReviews.Infra;
-using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using InvitationToken = LivlReviews.Infra.Data.InvitationToken;
+using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Api.Controllers;
 
@@ -16,7 +18,7 @@ namespace LivlReviews.Api.Controllers;
 [Route("/[controller]")]
 public class AdministrationController(UserManager<User> userManager, IRepository<InvitationToken> invitationTokenRepository) : ControllerBase
 {
-    [HttpGet("getUsers")]
+    [HttpGet("users")]
     [Authorize]
     [UserIdClaim]
     public async Task<IActionResult> GetUsers()

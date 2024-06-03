@@ -12,18 +12,43 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LivlReviews.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240530201047_AddInvitationToken")]
-    partial class AddInvitationToken
+    [Migration("20240603113845_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("LivlReviews.Domain.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Categories");
+                });
 
             modelBuilder.Entity("LivlReviews.Domain.Entities.Product", b =>
                 {
@@ -32,6 +57,9 @@ namespace LivlReviews.Infra.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -47,6 +75,10 @@ namespace LivlReviews.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("SourcePage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("URL")
                         .IsRequired()
                         .HasColumnType("text");
@@ -54,11 +86,9 @@ namespace LivlReviews.Infra.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("VinerURL")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -75,7 +105,6 @@ namespace LivlReviews.Infra.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("InvitedByUserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("InvitedUserId")
@@ -87,6 +116,11 @@ namespace LivlReviews.Infra.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InvitedByUserId");
+
+                    b.HasIndex("InvitedUserId")
+                        .IsUnique();
 
                     b.ToTable("InvitationTokens");
                 });
@@ -109,6 +143,9 @@ namespace LivlReviews.Infra.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<int?>("InvitedByTokenId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -224,6 +261,44 @@ namespace LivlReviews.Infra.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("LivlReviews.Domain.Entities.Category", b =>
+                {
+                    b.HasOne("LivlReviews.Domain.Entities.Category", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("LivlReviews.Domain.Entities.Product", b =>
+                {
+                    b.HasOne("LivlReviews.Domain.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("LivlReviews.Infra.Data.InvitationToken", b =>
+                {
+                    b.HasOne("LivlReviews.Infra.Data.User", "InvitedByUser")
+                        .WithMany("CreatedInvitationTokens")
+                        .HasForeignKey("InvitedByUserId");
+
+                    b.HasOne("LivlReviews.Infra.Data.User", "InvitedUser")
+                        .WithOne("InvitedByToken")
+                        .HasForeignKey("LivlReviews.Infra.Data.InvitationToken", "InvitedUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InvitedByUser");
+
+                    b.Navigation("InvitedUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.HasOne("LivlReviews.Infra.Data.User", null)
@@ -249,6 +324,20 @@ namespace LivlReviews.Infra.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LivlReviews.Domain.Entities.Category", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("LivlReviews.Infra.Data.User", b =>
+                {
+                    b.Navigation("CreatedInvitationTokens");
+
+                    b.Navigation("InvitedByToken");
                 });
 #pragma warning restore 612, 618
         }
