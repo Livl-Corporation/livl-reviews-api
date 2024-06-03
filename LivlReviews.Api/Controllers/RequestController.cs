@@ -19,7 +19,7 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
 {
     [HttpGet]
     [UserIdClaim]
-    public async Task<ActionResult<PaginatedResult<Request>>> GetRequests(int page = 1, int pageSize = 10)
+    public async Task<ActionResult<PaginatedResult<Request>>> GetRequests(int page = 1, int pageSize = 10, RequestState? state = null)
     {
         var currentUserId = HttpContext.Items["UserId"] as string;
         if(currentUserId is null) return Unauthorized();
@@ -33,7 +33,7 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
         PaginationParameters paginationParameters = new PaginationParameters { page = page, pageSize = pageSize };
         
         PaginatedResult<Request> requests = repository.GetPaginated(
-            request => request.GetRelevantUserId(currentUser) == currentUserId,
+            request => request.GetRelevantUserId(currentUser) == currentUserId && (state == null || request.State == state),
             paginationParameters,
             ["User", "Product"]
         );
@@ -73,7 +73,7 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
         }
         
         Request request = repository.GetById(id);
-        if (request == null)
+            if (request == null)
         {
             return NotFound();
         }

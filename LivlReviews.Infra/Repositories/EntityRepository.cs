@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,7 @@ public class EntityRepository<T> : IRepository<T> where T : class
     
     public List<T> GetAndInclude(Func<T, bool> predicate, string[] include)
     {
-        var query = DbSet.AsQueryable();
+        var query = DbSet.AsNoTracking();
         
         foreach (var inc in include)
         {
