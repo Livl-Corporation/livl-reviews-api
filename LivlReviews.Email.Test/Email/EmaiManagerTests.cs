@@ -29,7 +29,7 @@ public class EmaiManagerTests
         var recipients = new List<RecipientEmailInvitation> { recipient };
         
         var emailContent = "Email content";
-        var emailSubject = "Account Invitation";
+        var emailSubject = "Vous êtes invité à rejoindre LivlReviews!";
 
         _emailContentServiceMock.Setup(s => s.GenerateAccountInvitationContent(recipient.ActivationLink))
             .Returns(emailContent);
