@@ -1,8 +1,9 @@
+using LivlReviews.Domain.Entities.Interfaces;
 using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain.Entities;
 
-public class InvitationToken
+public class InvitationToken : ICreatedDate
 {
     public int Id { get; set; }
     public required string Token { get; set; }

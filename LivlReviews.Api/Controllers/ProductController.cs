@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using LivlReviews.Domain;
+using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Models;
 using LivlReviews.Infra.Repositories.Interfaces;
@@ -15,7 +16,7 @@ namespace LivlReviews.Api.Controllers;
 [Route("[controller]")]
 public class ProductController(
     IPaginatedRepository<Product> repository,
-    StockManager stockManager,
+    IStockManager stockManager,
     UserManager<User> userManager
     ) : ControllerBase
 {

@@ -1,10 +1,11 @@
+using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain;
 
-public class StockManager(IRequestInventory requestInventory)
+public class StockManager(IRequestInventory requestInventory) : IStockManager
 {
     public bool IsRequestable(Product product, User requester)
     {
