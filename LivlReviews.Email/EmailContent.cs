@@ -40,4 +40,19 @@ public class EmailContent : INotificationContent
         <p>Livl Corporation</p>
         ";
     }
+    
+    public string GenerateReceivedReviewContent(Review review)
+    {
+        return $@"
+        <h1>Nouvelle review reçue !</h1>
+        <p>Une nouvelle review a été soumise pour le produit <a href='{review.Request.Product.URL}'>{review.Request.Product.Name}</a>.</p>
+        <p><strong>Rendu par:</strong> {review.Request.User.Email}</p>
+        <p><strong>Titre:</strong> {review.Title}</p>
+        <p><strong>Contenu:</strong> {review.Content}</p>
+        <p><strong>Rating:</strong> {review.Rating}</p>
+        <p>Connectez-vous à l'application pour consulter la review.</p>
+        <p>Force à vous,</p>
+        <p>Livl Corporation</p>
+        ";
+    }
 }

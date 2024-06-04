@@ -1,4 +1,4 @@
-﻿namespace LivlReviews.Domain.Test.Clock;
+﻿namespace LivlReviews.Domain.Domain_interfaces_output;
 
 public interface IClock
 {

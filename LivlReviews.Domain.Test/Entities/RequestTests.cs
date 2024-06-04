@@ -1,5 +1,6 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Models;
 using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.Spies;
 using LivlReviews.Domain.Test.Stubs;
@@ -101,7 +102,7 @@ public class RequestTests
             ProductId = 1
         };
         
-        Request firstRequest = new Request
+        Request firstRequest = new Request(new FakeClock(new DateTime(2024, 5, 28)))
         {
             Id = 1,
             ProductId = 1,
@@ -110,7 +111,7 @@ public class RequestTests
             State = RequestState.Pending
         };
 
-        Request secondRequest = new Request
+        Request secondRequest = new Request(new FakeClock(new DateTime(2024, 5, 28)))
         {
             Id = 2,
             ProductId = 1,
@@ -150,7 +151,7 @@ public class RequestTests
             ProductId = 1
         };
         
-        Request firstRequest = new Request
+        Request firstRequest = new Request(new FakeClock(new DateTime(2024, 5, 28)))
         {
             Id = 1,
             ProductId = 1,
@@ -218,7 +219,7 @@ public class RequestTests
             ProductId = 1
         };
         
-        Request firstRequest = new Request
+        Request firstRequest = new Request(new FakeClock(new DateTime(2024, 5, 28)))
         {
             Id = 1,
             ProductId = 1,
