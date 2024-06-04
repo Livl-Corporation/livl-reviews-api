@@ -7,16 +7,26 @@ namespace LivlReviews.Domain;
 
 public class ReviewManager(IReviewInventory reviewInventory, IStockManager stockManager) : IReviewManager
 {
-    public bool IsReviewable(int requestId)
+    public bool IsReviewableDateReached(int requestId)
     {
-        return reviewInventory.IsReviewable(requestId);
+        return reviewInventory.IsReviewableDateReached(requestId);
+    }
+    
+    public bool HasStatusReceived(int requestId)
+    {
+        return reviewInventory.HasStatusReceived(requestId);
     }
     
     public Review CreateReview(Review review)
     {
-        if(!IsReviewable(review.RequestId))
+        if(!IsReviewableDateReached(review.RequestId))
         {
-            throw new Exception("Request is not in a reviewable state. Cannot create review.");
+            throw new Exception("The request is not reviewable yet, please wait until the reviewable date.");
+        }
+        
+        if(!HasStatusReceived(review.RequestId))
+        {
+            throw new Exception("The request should be in the received state to create a review.");
         }
         
         var createdReview = reviewInventory.CreateReview(review);

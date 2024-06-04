@@ -10,44 +10,44 @@ namespace LivlReviews.Domain.Test.Entities;
 public class ReviewTest
 {
     [Fact]
-    public void Is_Request_Reviewable_When_Received_Over_Seven_Days_Ago()
+    public void Is_Request_Reviewable_When_Reviewable_Date_Reached()
     {
         // Arrange
         var request = new Request
         {
             Id = 1,
             State = RequestState.Received,
-            ReceivedAt = new DateTime(2024, 5, 20) 
+            ReviewableAt = new DateTime(2024, 5, 20) 
         };
 
-        var fakeClock = new FakeClock(new DateTime(2024, 5, 28)); // 8 days after 
+        var fakeClock = new FakeClock(new DateTime(2024, 5, 28)); 
 
         var reviewInventory = new FakeReviewInventory(request, fakeClock);
 
         // Act
-        var result = reviewInventory.IsReviewable(request.Id);
+        var result = reviewInventory.IsReviewableDateReached(request.Id);
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void Is_Request_Not_Reviewable_When_Received_Less_Than_Seven_Days_Ago()
+    public void Is_Request_Not_Reviewable_When_Reviewable_Date_Not_Reached()
     {
         // Arrange
         var request = new Request
         {
             Id = 1,
             State = RequestState.Received,
-            ReceivedAt = new DateTime(2024, 5, 23) // May 23, 2024
+            ReviewableAt = new DateTime(2024, 5, 23) 
         };
 
-        var fakeClock = new FakeClock(new DateTime(2024, 5, 28)); // 5 days after
+        var fakeClock = new FakeClock(new DateTime(2024, 5, 20)); // 3 days before the reviewable date
 
         var reviewInventory = new FakeReviewInventory(request, fakeClock);
 
         // Act
-        var result = reviewInventory.IsReviewable(request.Id);
+        var result = reviewInventory.IsReviewableDateReached(request.Id);
 
         // Assert
         Assert.False(result);
@@ -61,10 +61,10 @@ public class ReviewTest
         {
             Id = 1,
             State = RequestState.Received,
-            ReceivedAt = new DateTime(2024, 5, 20) 
+            ReviewableAt = new DateTime(2024, 5, 20) 
         };
 
-        var fakeClock = new FakeClock(new DateTime(2024, 5, 28)); // 8 days after 
+        var fakeClock = new FakeClock(new DateTime(2024, 5, 28));
 
         var reviewInventory = new FakeReviewInventory(request, fakeClock);
         var requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request> { request });

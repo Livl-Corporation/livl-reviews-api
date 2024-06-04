@@ -42,6 +42,15 @@ public class ReviewController(
             Title = reviewRequest.Title,
         };
         
-        return Ok(reviewManager.CreateReview(review));
+        try 
+        {
+            review = reviewManager.CreateReview(review);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
+        return Ok(review);
     }
 }

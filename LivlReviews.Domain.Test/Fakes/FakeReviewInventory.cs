@@ -7,13 +7,18 @@ namespace LivlReviews.Domain.Test.Stubs;
 
 public class FakeReviewInventory(Request request, IClock clock) : IReviewInventory
 {
-    public bool IsReviewable(int requestId)
+    public bool IsReviewableDateReached(int requestId)
     {
-        return request.Id == requestId && request.State == RequestState.Received && request.ReceivedAt <= clock.Now.AddDays(-7);
+        return request.Id == requestId && clock.Now >= request.ReviewableAt;
     }
 
     public Review CreateReview(Review review)
     {
         return review;
+    }
+
+    public bool HasStatusReceived(int requestId)
+    {
+        return request.Id == requestId && request.State == RequestState.Received;
     }
 }

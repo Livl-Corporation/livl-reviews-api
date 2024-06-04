@@ -4,6 +4,7 @@ namespace LivlReviews.Domain.Domain_interfaces_output;
 
 public interface IReviewInventory
 {
-    bool IsReviewable(int requestId);
+    bool IsReviewableDateReached(int requestId);
     Review CreateReview(Review review);
+    bool HasStatusReceived(int requestId);
 }
