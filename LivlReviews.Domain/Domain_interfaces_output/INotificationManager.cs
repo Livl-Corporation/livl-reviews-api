@@ -7,4 +7,5 @@ public interface INotificationManager
 {
     public Task SendAccountInvitationNotification(List<RecipientNotificationInvitation> recipientEmailInvitations);
     public Task SendRequestFromUserToAdminNotification(Request request);
+    public Task SendNotificationToUserAboutRequestStateChange(Request request);
 }

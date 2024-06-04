@@ -28,4 +28,16 @@ public class EmailContent : INotificationContent
         <p>Livl Corporation</p>
         ";
     }
+    
+    public string GenerateRequestStateChangeContent(Request request)
+    {
+        return $@"
+        <h1>Changement d'état de votre demande de review</h1>
+        <p>Votre demande de review pour le produit {request.Product.Name} a été mise à jour.</p>
+        <p><strong>État:</strong> {request.State}</p>
+        <p>Connectez-vous à l'application pour consulter la demande.</p>
+        <p>Force à vous,</p>
+        <p>Livl Corporation</p>
+        ";
+    }
 }

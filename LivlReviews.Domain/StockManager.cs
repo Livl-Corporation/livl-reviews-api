@@ -42,9 +42,13 @@ public class StockManager(IRequestInventory requestInventory, INotificationManag
         return res;
     }
     
-    public void UpdateRequestState(Request request, RequestState state)
+    public Request UpdateRequestState(Request request, RequestState state)
     {
-        requestInventory.UpdateRequestState(request, state);
+        var requestUpdated = requestInventory.UpdateRequestState(request, state);
+        
+        notificationManager.SendNotificationToUserAboutRequestStateChange(requestUpdated);
+        
+        return requestUpdated;
     }
 
     public Request ApproveRequest(Request request, IUser requester, string? message = null)
@@ -54,12 +58,12 @@ public class StockManager(IRequestInventory requestInventory, INotificationManag
         foreach (Request req in requests)
         {
             req.AdminMessage = "[SYSTEM] Request was rejected because a similar request from another user was approved.";
-            requestInventory.RejectRequest(req);
+            UpdateRequestState(req, RequestState.Rejected);
         }
         
         request.AdminMessage = message;
         
         requestInventory.RemoveStock(request);
-        return requestInventory.ApproveRequest(request);
+        return UpdateRequestState(request, RequestState.Approved);
     }
 }

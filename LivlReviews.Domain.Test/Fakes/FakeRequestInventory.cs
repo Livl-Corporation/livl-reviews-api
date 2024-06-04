@@ -4,7 +4,7 @@ using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain.Test.Fakes;
 
-public class FakeRequestInventory(List<ProductStock> stocks, List<Request> requests) : IRequestInventory
+public class FakeRequestInventory(List<ProductStock> stocks, List<Request> requests, INotificationManager notificationManager) : IRequestInventory
 {
     public List<ProductStock> stocks = stocks;
     public List<Request> requests = requests;
@@ -19,29 +19,19 @@ public class FakeRequestInventory(List<ProductStock> stocks, List<Request> reque
         return request;
     }
 
-    public void UpdateRequestState(Request request, RequestState state)
+    public Request UpdateRequestState(Request request, RequestState state)
     {
         var idx = requests.FindIndex(r => r.Id == request.Id);
         requests[idx].State = state;
+        
+        notificationManager.SendNotificationToUserAboutRequestStateChange(requests[idx]);
+        
+        return requests[idx];
     }
 
     public List<Request> GetSimilarPendingRequests(Request request)
     {
         return requests.FindAll(r => r.ProductId == request.ProductId && r.AdminId == request.AdminId && r.State == RequestState.Pending && r.Id != request.Id);
-    }
-
-    public Request ApproveRequest(Request request)
-    {
-        var idx = requests.FindIndex(r => r.Id == request.Id);
-        requests[idx].State = RequestState.Approved;
-        return requests[idx];
-    }
-
-    public Request RejectRequest(Request request)
-    {
-        var idx = requests.FindIndex(r => r.Id == request.Id);
-        requests[idx].State = RequestState.Rejected;
-        return requests[idx];
     }
     
     public void RemoveStock(Request request)
