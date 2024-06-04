@@ -170,4 +170,72 @@ public class RequestTests
         // Assert
         Assert.Empty(requestInventory.stocks);
     }
+
+    [Fact]
+    public async Task Send_notification_to_admin_when_user_make_a_request()
+    {
+        // Arrange
+        Product product = new Product
+        {
+            Id = 1,
+            Name = "Product 1",
+            URL = "http://product1.com",
+        };
+
+        FakeUser requester = new FakeUser
+        {
+            Id = "2",
+            Email = "User 2",
+            InvitedByTokenId = 1,
+            InvitedByToken = InvitationTokensStub.InvitationToken,
+        };
+
+        ProductStock stock = new ProductStock
+        {
+            AdminId = UsersStub.Admin.Id,
+            ProductId = 1
+        };
+
+        FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock> { stock }, new List<Request>());
+        
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, notificationManager);
+
+        // Act
+        await stockManager.RequestProduct(product, requester);
+
+        // Assert
+        Assert.True(notificationManager.IsSendRequestFromUserToAdminNotificationCalled);
+    }
+    
+    [Fact]
+    public async Task Should_Throw_Exception_When_Request_Product_Not_Requestable()
+    {
+        // Arrange
+        Product product = new Product
+        {
+            Id = 1,
+            Name = "Product 1",
+            URL = "http://product1.com",
+        };
+
+        FakeUser requester = new FakeUser
+        {
+            Id = "2",
+            Email = "User 2",
+            InvitedByTokenId = 1,
+            InvitedByToken = InvitationTokensStub.InvitationToken,
+        };
+
+        FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request>());
+        
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, notificationManager);
+
+        // Act
+        Task Act() => stockManager.RequestProduct(product, requester);
+
+        // Assert
+        await Assert.ThrowsAsync<Exception>(Act);
+    }
 }
