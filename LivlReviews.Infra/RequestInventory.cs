@@ -26,24 +26,11 @@ public class RequestInventory(IPaginatedRepository<Request> requestRepository, I
             req.Id != request.Id);
     }
     
-    public Request ApproveRequest(Request request)
-    {
-        request.State = RequestState.Approved;
-        
-        return requestRepository.Update(request);
-    }
-    
-    public Request RejectRequest(Request request)
-    {
-        request.State = RequestState.Rejected;
-        
-        return requestRepository.Update(request);
-    }
-    
-    public void UpdateRequestState(Request request, RequestState state)
+    public Request UpdateRequestState(Request request, RequestState state)
     {
         request.State = state;
         requestRepository.Update(request);
+        return request;
     }
     
     public void RemoveStock(Request request)

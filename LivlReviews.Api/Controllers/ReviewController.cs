@@ -26,8 +26,9 @@ public class ReviewController(
         {
             return BadRequest(ModelState);
         }
-        
-        var request = requestRepository.GetById(reviewRequest.RequestId);
+
+        var request = requestRepository
+            .GetAndInclude(r => r.Id == reviewRequest.RequestId, ["Product", "User", "Admin"]).FirstOrDefault();
         
         if (request == null)
         {
@@ -36,15 +37,15 @@ public class ReviewController(
         
         var review = new Review
         {
-            RequestId = reviewRequest.RequestId,
+            RequestId = request.Id,
             Rating = reviewRequest.Rating,
             Content = reviewRequest.Content,
-            Title = reviewRequest.Title,
+            Title = reviewRequest.Title
         };
         
         try 
         {
-            review = reviewManager.CreateReview(review);
+            review = reviewManager.CreateReview(review, request);
         }
         catch (Exception e)
         {

@@ -1,8 +1,8 @@
 ﻿using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
-using LivlReviews.Domain.Test.Clock;
+using LivlReviews.Domain.Models;
 using LivlReviews.Domain.Test.Fakes;
-using LivlReviews.Domain.Test.Stubs;
+using LivlReviews.Domain.Test.Spies;
 using Xunit;
 
 namespace LivlReviews.Domain.Test.Entities;
@@ -13,19 +13,18 @@ public class ReviewTest
     public void Is_Request_Reviewable_When_Reviewable_Date_Reached()
     {
         // Arrange
-        var request = new Request
+        var currentTime = new DateTime(2024, 5, 28);
+        var fakeClock = new FakeClock(currentTime);
+        var request = new Request()
         {
             Id = 1,
             State = RequestState.Received,
-            ReviewableAt = new DateTime(2024, 5, 20) 
+            ReviewableAt = new DateTime(2024, 5, 20),
+            Clock = fakeClock
         };
 
-        var fakeClock = new FakeClock(new DateTime(2024, 5, 28)); 
-
-        var reviewInventory = new FakeReviewInventory(request, fakeClock);
-
         // Act
-        var result = reviewInventory.IsReviewableDateReached(request.Id);
+        var result = request.IsReviewable;
 
         // Assert
         Assert.True(result);
@@ -35,19 +34,18 @@ public class ReviewTest
     public void Is_Request_Not_Reviewable_When_Reviewable_Date_Not_Reached()
     {
         // Arrange
-        var request = new Request
+        var currentTime = new DateTime(2024, 5, 20);
+        var fakeClock = new FakeClock(currentTime);
+        var request = new Request()
         {
             Id = 1,
             State = RequestState.Received,
-            ReviewableAt = new DateTime(2024, 5, 23) 
+            ReviewableAt = new DateTime(2024, 5, 23),
+            Clock = fakeClock
         };
 
-        var fakeClock = new FakeClock(new DateTime(2024, 5, 20)); // 3 days before the reviewable date
-
-        var reviewInventory = new FakeReviewInventory(request, fakeClock);
-
         // Act
-        var result = reviewInventory.IsReviewableDateReached(request.Id);
+        var result = request.IsReviewable;
 
         // Assert
         Assert.False(result);
@@ -57,21 +55,23 @@ public class ReviewTest
     public void Set_Request_State_To_Completed_When_Review_Created()
     {
         // Arrange
-        var request = new Request
+        var request = new Request()
         {
             Id = 1,
             State = RequestState.Received,
-            ReviewableAt = new DateTime(2024, 5, 20) 
+            ReviewableAt = new DateTime(2024, 5, 20),
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
-
-        var fakeClock = new FakeClock(new DateTime(2024, 5, 28));
-
-        var reviewInventory = new FakeReviewInventory(request, fakeClock);
-        var requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request> { request });
-        var stockInventory = new FakeStockInventory(new List<ProductStock>());
-        var stockManager = new StockManager(requestInventory, stockInventory);
         
-        var reviewManager = new ReviewManager(reviewInventory, stockManager);
+        var reviewInventory = new FakeReviewInventory();
+        var requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request> { request }, new NotificationManagerSpy());
+        var stockInventory = new FakeStockInventory(new List<ProductStock>());
+        
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);       
+        
+        var reviewManager = new ReviewManager(reviewInventory, stockManager, new NotificationManagerSpy());
         
         var review = new Review
         {
@@ -84,7 +84,7 @@ public class ReviewTest
         };
 
         // Act
-        reviewManager.CreateReview(review);
+        reviewManager.CreateReview(review, request);
 
         // Assert
         var requestState = requestInventory.requests.Find(r => r.Id == request.Id)?.State;

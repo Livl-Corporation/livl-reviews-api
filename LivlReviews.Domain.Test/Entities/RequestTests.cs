@@ -1,6 +1,8 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Models;
 using LivlReviews.Domain.Test.Fakes;
+using LivlReviews.Domain.Test.Spies;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
 
@@ -34,11 +36,11 @@ public class RequestTests
             ProductId = 1,
             AdminId = UsersStub.Admin.Id
         };
-    
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
-        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         
-        StockManager stockManager = new StockManager(requestInventory, stockInventory);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [], new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         
         // Act
         bool isRequestable = stockManager.IsRequestable(product, requester);
@@ -71,11 +73,12 @@ public class RequestTests
             AdminId = "1"
         };
     
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [], new NotificationManagerSpy());
         FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         
-        StockManager stockManager = new StockManager(requestInventory, stockInventory);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         // Act
         bool isRequestable = stockManager.IsRequestable(product, admin);
 
@@ -101,28 +104,31 @@ public class RequestTests
             ProductId = 1
         };
         
-        Request firstRequest = new Request
+        Request firstRequest = new Request()
         {
             Id = 1,
             ProductId = 1,
             AdminId = "1",
             UserId = "2",
-            State = RequestState.Pending
+            State = RequestState.Pending,
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
 
-        Request secondRequest = new Request
+        Request secondRequest = new Request()
         {
             Id = 2,
             ProductId = 1,
             AdminId = "1",
             UserId = "3",
-            State = RequestState.Pending
+            State = RequestState.Pending,
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
-
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest]);
-        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         
-        StockManager stockManager = new StockManager(requestInventory, stockInventory);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest], new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
+
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         
         // Act
         Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);
@@ -150,24 +156,130 @@ public class RequestTests
             ProductId = 1
         };
         
-        Request firstRequest = new Request
+        Request firstRequest = new Request()
         {
             Id = 1,
             ProductId = 1,
             AdminId = "1",
             UserId = "2",
-            State = RequestState.Pending
+            State = RequestState.Pending,
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
 
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest]);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest], new NotificationManagerSpy());
         FakeStockInventory stockInventory = new FakeStockInventory([stock]);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         
-        StockManager stockManager = new StockManager(requestInventory, stockInventory);
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         
         // Act
         Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);
         
         // Assert
         Assert.Empty(requestInventory.stocks);
+    }
+
+    [Fact]
+    public async Task Send_notification_to_admin_when_user_make_a_request()
+    {
+        // Arrange
+        Product product = new Product
+        {
+            Id = 1,
+            Name = "Product 1",
+            URL = "http://product1.com",
+        };
+
+        FakeUser requester = new FakeUser
+        {
+            Id = "2",
+            Email = "User 2",
+            InvitedByTokenId = 1,
+            InvitedByToken = InvitationTokensStub.InvitationToken,
+        };
+
+        ProductStock stock = new ProductStock
+        {
+            AdminId = UsersStub.Admin.Id,
+            ProductId = 1
+        };
+
+        var stocks = new List<ProductStock> { stock };
+        
+        FakeRequestInventory requestInventory = new FakeRequestInventory(stocks, new List<Request>(), new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory(stocks);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
+        
+        // Act
+        await stockManager.RequestProduct(product, requester);
+
+        // Assert
+        Assert.True(notificationManager.IsSendRequestFromUserToAdminNotificationCalled);
+    }
+
+    [Fact]
+    public async Task Send_notification_to_user_when_request_state_updated()
+    {
+        // Arrange
+        ProductStock stock = new ProductStock
+        {
+            AdminId = UsersStub.Admin.Id,
+            ProductId = 1
+        };
+        
+        Request firstRequest = new Request()
+        {
+            Id = 1,
+            ProductId = 1,
+            AdminId = UsersStub.Admin.Id,
+            UserId = "2",
+            State = RequestState.Pending,
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
+        };
+
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest], new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
+        
+        // Act
+        stockManager.UpdateRequestState(firstRequest, RequestState.Approved);
+
+        // Assert
+        Assert.True(notificationManager.IsSendNotificationToUserAboutRequestStateChangeCalled);
+    }
+
+    [Fact]
+    public async Task Should_Throw_Exception_When_Request_Product_Not_Requestable()
+    {
+        // Arrange
+        Product product = new Product
+        {
+            Id = 1,
+            Name = "Product 1",
+            URL = "http://product1.com",
+        };
+
+        FakeUser requester = new FakeUser
+        {
+            Id = "2",
+            Email = "User 2",
+            InvitedByTokenId = 1,
+            InvitedByToken = InvitationTokensStub.InvitationToken,
+        };
+
+        FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request>(), new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory(new List<ProductStock>());
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
+
+        // Act
+        Task Act() => stockManager.RequestProduct(product, requester);
+
+        // Assert
+        await Assert.ThrowsAsync<Exception>(Act);
     }
 }

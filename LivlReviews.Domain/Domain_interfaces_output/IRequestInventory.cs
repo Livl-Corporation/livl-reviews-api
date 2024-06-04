@@ -7,10 +7,7 @@ public interface IRequestInventory
 {
     bool IsRequestable(int productId, string adminId);
     Request CreateProductRequest(Request request);
-    void UpdateRequestState(Request request, RequestState state);
+    Request UpdateRequestState(Request request, RequestState state);
     List<Request> GetSimilarPendingRequests(Request request);
-    
-    Request ApproveRequest(Request request);
-    Request RejectRequest(Request request);
     void RemoveStock(Request request);
 }

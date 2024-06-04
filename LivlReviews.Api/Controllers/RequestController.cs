@@ -44,7 +44,7 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
     [HttpGet("{id}")]
     public ActionResult<Request> GetRequest(int id)
     {
-        var request = repository.GetAndInclude(r => r.Id == id, ["User", "Product"]).First();
+        var request = repository.GetAndInclude(r => r.Id == id, ["User", "Product"]).FirstOrDefault();
         
         if (request == null)
         {
@@ -72,8 +72,9 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
             return Forbid();
         }
         
-        Request request = repository.GetById(id);
-            if (request == null)
+        var request = repository.GetAndInclude(r => r.Id == id, ["User", "Product"]).FirstOrDefault();
+
+        if (request == null)
         {
             return NotFound();
         }
@@ -100,15 +101,15 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
         {
             return Forbid();
         }
-        
-        Request request = repository.GetById(id);
+
+        var request = repository.GetAndInclude(r => r.Id == id, ["User", "Product"]).FirstOrDefault();
         if (request == null)
         {
             return NotFound();
         }
 
-        request.State = RequestState.Rejected;
         request.AdminMessage = messageRequest.Message;
+        stockManager.UpdateRequestState(request, RequestState.Rejected);
         
         repository.Update(request);
         
@@ -128,7 +129,8 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
             return Unauthorized();
         }
 
-        Request request = repository.GetById(id);
+        var request = repository.GetAndInclude(r => r.Id == id, ["User", "Product"]).FirstOrDefault();
+        
         if (request == null)
         {
             return NotFound();
@@ -144,8 +146,8 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
             return BadRequest("Request must be approved before being received.");
         }
         
-        request.State = RequestState.Received;
         request.ReviewableAt = DateTime.Today.AddDays(7);
+        stockManager.UpdateRequestState(request, RequestState.Received);
         
         repository.Update(request);
         
