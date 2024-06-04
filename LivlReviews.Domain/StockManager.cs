@@ -5,7 +5,7 @@ using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain;
 
-public class StockManager(IRequestInventory requestInventory) : IStockManager
+public class StockManager(IRequestInventory requestInventory, INotificationManager notificationManager) : IStockManager
 {
     public bool IsRequestable(Product product, IUser requester)
     {
@@ -17,7 +17,7 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
         return requestInventory.IsRequestable(product.Id, requester.InvitedByToken.InvitedByUserId);
     }
 
-    public Request RequestProduct(Product product, IUser requester, string? message = null)
+    public async Task<Request> RequestProduct(Product product, IUser requester, string? message = null)
     {
         if(!IsRequestable(product, requester))
         {
@@ -34,7 +34,11 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
         };
         
         var res = requestInventory.CreateProductRequest(request);
-
+        
+        request.Admin = requester.InvitedByToken.InvitedByUser;
+        request.User = requester;
+        await notificationManager.SendRequestFromUserToAdminNotification(request);
+        
         return res;
     }
     
