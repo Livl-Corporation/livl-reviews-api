@@ -106,6 +106,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
         
         modelBuilder.Entity<Review>()
             .HasOne<Request>(r => r.Request);
+        
+        modelBuilder.Entity<LimitConfig>()
+            .HasOne(l => l.AdminUser as User)
+            .WithOne(u => u.LimitConfig)
+            .HasForeignKey<LimitConfig>(l => l.AdminUserId);
     }
     
     private void ConfigureEntityConstraints(ModelBuilder modelBuilder)
@@ -126,4 +131,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
     public DbSet<Request> Requests { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<ProductStock> Stocks { get; set; }
+    public DbSet<LimitConfig> LimitConfigs { get; set; }
 }

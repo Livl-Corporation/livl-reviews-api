@@ -20,4 +20,6 @@ public class User : IdentityUser, IUser
     public InvitationToken? InvitedByToken { get; set; }
     public int? InvitedByTokenId { get; set; }
     public List<InvitationToken> CreatedInvitationTokens { get; set; }
+    
+    public LimitConfig LimitConfig { get; set; }
 }
