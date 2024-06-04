@@ -11,7 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using LivlReviews.Email;
-using LivlReviews.Email.Interfaces;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories;
@@ -73,6 +72,7 @@ builder.Services.AddScoped<IRepository<Review>, EntityRepository<Review>>();
 builder.Services.AddScoped<IRequestInventory, RequestInventory>();
 builder.Services.AddScoped<IStockManager, StockManager>();
 builder.Services.AddScoped<IRepository<User>, EntityRepository<User>>();
+
 builder.Services.AddScoped<IReviewManager, ReviewManager>();
 builder.Services.AddScoped<IReviewInventory, ReviewInventory>();
 
@@ -131,9 +131,8 @@ var smtpSettings = builder.Configuration.GetSection("SmtpSettings");
 var smtpPassword = builder.Configuration["Smtp:Password"];
 
 builder.Services.Configure<SmtpSettings>(smtpSettings);
-builder.Services.AddTransient<IEmailSender, SmtpEmailSender>(provider => new SmtpEmailSender(provider.GetRequiredService<IOptions<SmtpSettings>>(), smtpPassword));
-builder.Services.AddTransient<EmaiManager>();
-builder.Services.AddTransient<IEmailContent, EmailContent>();
+builder.Services.AddTransient<INotificationSender, SmtpEmailSender>(provider => new SmtpEmailSender(provider.GetRequiredService<IOptions<SmtpSettings>>(), smtpPassword));
+builder.Services.AddTransient<INotificationContent, EmailContent>();
 
 var app = builder.Build();
 

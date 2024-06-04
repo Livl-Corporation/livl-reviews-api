@@ -1,8 +1,10 @@
+using System.Net.Mail;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Exceptions;
+using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace LivlReviews.Infra;
@@ -19,7 +21,14 @@ public class UserInventory (UserManager<User> userManager) : IUserInventory
             throw new UserNotFoundException();
         }
         
-        return new User() { Id = userResult.Id, Email = userResult.Email ?? string.Empty, Role = userResult.Role, EmailConfirmed = userResult.EmailConfirmed };
+        return userResult;
+    }
+
+    public async Task<IUser?> GetUserByEmail(string email)
+    {
+        var userResult = await userManager.FindByEmailAsync(email);
+
+        return userResult;
     }
 
     public async Task<IUser> ValidateUser(string userId, string password)
@@ -54,7 +63,34 @@ public class UserInventory (UserManager<User> userManager) : IUserInventory
         };
     }
 
-    public Task<IUser> CreateUserObject(IUser sender, string email)
+    public async Task CreateUser(IUser sender, string email, string? password = null)
+    {
+        User newUser = new User
+        {
+            Email = email,
+            UserName = email,
+            Role = Role.User,
+            InvitedByToken = sender.InvitedByToken,
+            InvitedByTokenId = sender.InvitedByTokenId,
+        };
+
+        if (password is not null)
+        {
+            var res = await userManager.CreateAsync(
+                newUser,
+                password
+            );
+        }
+        else
+        {
+            var res = await userManager.CreateAsync(
+                newUser
+            );
+        }
+        
+    }
+
+    public Task<IUser> InstanciateUserObject(IUser sender, string email)
     {
         return Task.FromResult<IUser>(new User
         {
@@ -63,5 +99,10 @@ public class UserInventory (UserManager<User> userManager) : IUserInventory
             InvitedByToken = sender.InvitedByToken,
             InvitedByTokenId = sender.InvitedByTokenId,
         });
+    }
+
+    public async Task UpdateUser(IUser user)
+    {
+        await userManager.UpdateAsync((user as User)!);
     }
 }

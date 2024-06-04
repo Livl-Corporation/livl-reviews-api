@@ -1,10 +1,10 @@
-﻿using LivlReviews.Email.Interfaces;
+﻿using LivlReviews.Domain.Domain_interfaces_output;
 
 namespace LivlReviews.Email;
 
-public class EmailContent : IEmailContent
+public class EmailContent : INotificationContent
 {
-    public string GenerateAccountInvitationContent(string activationLink)
+    public string GenerateAccountInvitationTokenContent(string activationLink)
     {
         return $@"
             <h1>Bienvenue sur LivlReviews!</h1>

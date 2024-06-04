@@ -9,7 +9,7 @@ using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Invitation;
-using LivlReviews.Email.Interfaces;
+using LivlReviews.Email;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +22,7 @@ namespace LivlReviews.Api.Controllers;
 
 [ApiController]
 [Route("/[controller]")]
-public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository, IEmailSender emailSender, IEmailContent emailContent) : ControllerBase
+public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository, INotificationSender notificationSender, INotificationContent notificationContent) : ControllerBase
 {
 
     [HttpPost]
@@ -35,16 +35,20 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         
         var currentUserId = HttpContext.Items["UserId"] as string;
         if(currentUserId is null) return Unauthorized();
-
+        
         try
         {
             IInvitationSender invitationSender = new InvitationSender(
-                new InvitationDelivery(userManager, invitationTokenRepository, emailSender, emailContent),
-                new UserInventory(userManager)
+                new InvitationTokenInventory(invitationTokenRepository),
+                new UserInventory(userManager),
+                new EmailManager(
+                    notificationSender,
+                    notificationContent
+                )
             );
             await invitationSender.SendInvitation(currentUserId, request.Email);
         } catch (Exception e)
-        {
+        { 
             return BadRequest(e.Message);
         }
 

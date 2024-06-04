@@ -14,6 +14,12 @@ public class FakeUserInventory(List<IUser> users) : IUserInventory
         return Task.FromResult(user);
     }
 
+    public Task<IUser?> GetUserByEmail(string email)
+    {
+        var user = users.FirstOrDefault(u => u.Email == email);
+        return Task.FromResult(user);
+    }
+
     public Task<IUser> ValidateUser(string userId, string password)
     {
         IsValidateUserCalled = true;
@@ -23,7 +29,20 @@ public class FakeUserInventory(List<IUser> users) : IUserInventory
         return Task.FromResult(user);
     }
 
-    public Task<IUser> CreateUserObject(IUser sender, string email)
+    public Task CreateUser(IUser sender, string email, string? password = null)
+    {
+        var newUser = new FakeUser
+        {
+            Email = email,
+            Role = Role.User,
+            InvitedByTokenId = sender.InvitedByTokenId,
+            InvitedByToken = sender.InvitedByToken,
+        };
+        users.Add(newUser);
+        return Task.CompletedTask;
+    }
+
+    public Task<IUser> InstanciateUserObject(IUser sender, string email)
     {
         return Task.FromResult<IUser>(new FakeUser
         {
@@ -32,5 +51,14 @@ public class FakeUserInventory(List<IUser> users) : IUserInventory
             InvitedByTokenId = sender.InvitedByTokenId,
             InvitedByToken = sender.InvitedByToken,
         });
+    }
+
+    public Task UpdateUser(IUser user)
+    {
+        var userToUpdate = users.FirstOrDefault(u => u.Id == user.Id);
+        if(userToUpdate is null) throw new Exception("User not found");
+        users.Remove(userToUpdate);
+        users.Add(user);
+        return Task.CompletedTask;
     }
 }
