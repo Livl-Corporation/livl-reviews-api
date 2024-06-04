@@ -57,9 +57,8 @@ public class FakeUserInventory(List<IUser> users) : IUserInventory
     {
         var userToUpdate = users.FirstOrDefault(u => u.Id == user.Id);
         if(userToUpdate is null) throw new Exception("User not found");
-        userToUpdate.EmailConfirmed = user.EmailConfirmed;
-        userToUpdate.InvitedByTokenId = user.InvitedByTokenId;
-        userToUpdate.InvitedByToken = user.InvitedByToken;
+        users.Remove(userToUpdate);
+        users.Add(user);
         return Task.CompletedTask;
     }
 }
