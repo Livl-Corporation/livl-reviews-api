@@ -12,4 +12,5 @@ public interface IRequestInventory
     
     Request ApproveRequest(Request request);
     Request RejectRequest(Request request);
+    void RemoveStock(Request request);
 }

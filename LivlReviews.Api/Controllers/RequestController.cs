@@ -44,7 +44,7 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
     [HttpGet("{id}")]
     public ActionResult<Request> GetRequest(int id)
     {
-        var request = repository.GetById(id);
+        var request = repository.GetAndInclude(r => r.Id == id, ["User", "Product"]).First();
         
         if (request == null)
         {
