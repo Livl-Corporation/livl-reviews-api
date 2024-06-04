@@ -36,11 +36,11 @@ public class RequestTests
             ProductId = 1,
             AdminId = UsersStub.Admin.Id
         };
-    
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [], new NotificationManagerSpy());
         
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [], new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
-        StockManager stockManager = new StockManager(requestInventory, notificationManager);
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         
         // Act
         bool isRequestable = stockManager.IsRequestable(product, requester);
@@ -74,9 +74,11 @@ public class RequestTests
         };
     
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [], new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
-        StockManager stockManager = new StockManager(requestInventory, notificationManager);        
+        
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         // Act
         bool isRequestable = stockManager.IsRequestable(product, admin);
 
@@ -121,11 +123,12 @@ public class RequestTests
             State = RequestState.Pending,
             Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
-
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest], new NotificationManagerSpy());
         
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest], new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
+
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
-        StockManager stockManager = new StockManager(requestInventory, notificationManager);
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         
         // Act
         Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);
@@ -164,9 +167,10 @@ public class RequestTests
         };
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest], new NotificationManagerSpy());
-        
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
-        StockManager stockManager = new StockManager(requestInventory, notificationManager);
+        
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         
         // Act
         Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);
@@ -200,11 +204,14 @@ public class RequestTests
             ProductId = 1
         };
 
-        FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock> { stock }, new List<Request>(), new NotificationManagerSpy());
+        var stocks = new List<ProductStock> { stock };
         
+        FakeRequestInventory requestInventory = new FakeRequestInventory(stocks, new List<Request>(), new NotificationManagerSpy());
+        FakeStockInventory stockInventory = new FakeStockInventory(stocks);
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
-        StockManager stockManager = new StockManager(requestInventory, notificationManager);
-
+        
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
+        
         // Act
         await stockManager.RequestProduct(product, requester);
 
@@ -233,9 +240,9 @@ public class RequestTests
         };
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest], new NotificationManagerSpy());
-        
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
-        StockManager stockManager = new StockManager(requestInventory, notificationManager);
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
         
         // Act
         stockManager.UpdateRequestState(firstRequest, RequestState.Approved);
@@ -264,9 +271,10 @@ public class RequestTests
         };
 
         FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request>(), new NotificationManagerSpy());
-        
+        FakeStockInventory stockInventory = new FakeStockInventory(new List<ProductStock>());
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
-        StockManager stockManager = new StockManager(requestInventory, notificationManager);
+        
+        StockManager stockManager = new StockManager(requestInventory, stockInventory, notificationManager);
 
         // Act
         Task Act() => stockManager.RequestProduct(product, requester);

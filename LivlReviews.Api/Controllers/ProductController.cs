@@ -16,7 +16,8 @@ namespace LivlReviews.Api.Controllers;
 public class ProductController(
     IPaginatedRepository<Product> repository,
     IStockManager stockManager,
-    IRepository<User> userRepository
+    IRepository<User> userRepository,
+    IImportManager importManager
     ) : ControllerBase
 {
     [HttpGet]
@@ -85,5 +86,33 @@ public class ProductController(
         }
         
         return Ok(await stockManager.RequestProduct(product, currentUser, messageRequest.Message));
+    }
+
+    [HttpPost("submit")]
+    [UserIdClaim]
+    public ActionResult SubmitProducts([FromBody] ProductSubmissionRequest productSubmissionRequest)
+    {
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
+        var currentUser = userRepository.GetAndInclude(u => u.Id == currentUserId, ["InvitedByToken"]).First();
+        if(currentUser is null)
+        {
+            return Unauthorized();
+        }
+
+        if (!currentUser.IsAdmin)
+        {
+            return Forbid();
+        }
+        
+        var import = importManager.ImportProducts(productSubmissionRequest.pc, productSubmissionRequest.cc, productSubmissionRequest.data);
+
+        if (productSubmissionRequest.page == productSubmissionRequest.pageCount)
+        {
+            importManager.EndImport(import);
+        }
+        
+        return new NoContentResult();
     }
 }

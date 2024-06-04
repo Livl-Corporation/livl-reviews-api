@@ -15,6 +15,7 @@ public interface IUser
     public InvitationToken? InvitedByToken { get; set; }
     public int? InvitedByTokenId { get; set; }
     public List<InvitationToken> CreatedInvitationTokens { get; set; }
+    public List<Import> Imports { get; set; }
     
     public bool IsAdmin => Role == Role.Admin;
 

@@ -6,7 +6,7 @@ using LivlReviews.Domain.Models;
 
 namespace LivlReviews.Domain;
 
-public class StockManager(IRequestInventory requestInventory, INotificationManager notificationManager) : IStockManager
+public class StockManager(IRequestInventory requestInventory, IStockInventory stockInventory, INotificationManager notificationManager) : IStockManager
 {
     public bool IsRequestable(Product product, IUser requester)
     {
@@ -66,5 +66,25 @@ public class StockManager(IRequestInventory requestInventory, INotificationManag
         
         requestInventory.RemoveStock(request);
         return UpdateRequestState(request, RequestState.Approved);
+    }
+    
+    public void UpdateStocks(Product[] products, Import import)
+    {
+        foreach (var product in products)
+        {
+            ProductStock stock = new ProductStock
+            {
+                ProductId = product.Id,
+                AdminId = import.AdminId,
+                ImportId = import.Id
+            };
+            
+            stockInventory.CreateOrUpdate(stock);
+        }
+    }
+    
+    public void RemoveStocksFromPreviousImport(Import import)
+    {
+        stockInventory.RemoveStocksFromPreviousImports(import);
     }
 }

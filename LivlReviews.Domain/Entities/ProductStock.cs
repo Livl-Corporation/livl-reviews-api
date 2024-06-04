@@ -7,4 +7,7 @@ public class ProductStock
     
     public string AdminId { get; set; }
     public IUser Admin { get; set; }
+    
+    public int ImportId { get; set; }
+    public Import Import { get; set; }
 }

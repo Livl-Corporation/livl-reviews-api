@@ -94,6 +94,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
             .HasForeignKey(ps => ps.AdminId)
             .OnDelete(DeleteBehavior.NoAction);
 
+        modelBuilder.Entity<ProductStock>()
+            .HasOne<Import>(p => p.Import);
+        
         modelBuilder.Entity<InvitationToken>()
             .HasOne(i => i.InvitedUser as User)
             .WithOne(u => u.InvitedByToken)
@@ -106,6 +109,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
         
         modelBuilder.Entity<Review>()
             .HasOne<Request>(r => r.Request);
+
+        modelBuilder.Entity<Import>()
+            .HasOne<User>(i => i.Admin as User)
+            .WithMany(u => u.Imports)
+            .HasForeignKey(i => i.AdminId);
+        
+        
     }
     
     private void ConfigureEntityConstraints(ModelBuilder modelBuilder)
@@ -126,4 +136,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityUser
     public DbSet<Request> Requests { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<ProductStock> Stocks { get; set; }
+    public DbSet<Import> Imports { get; set; }
 }
