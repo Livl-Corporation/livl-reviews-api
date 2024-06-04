@@ -6,4 +6,5 @@ public interface INotificationContent
 {
     public string GenerateAccountInvitationTokenContent(string activationLink);
     public string GenerateRequestFromUserToAdminContent(Request request);
+    public string GenerateRequestStateChangeContent(Request request);
 }

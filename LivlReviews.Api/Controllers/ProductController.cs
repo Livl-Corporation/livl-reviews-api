@@ -26,7 +26,8 @@ public class ProductController(
         var currentUserId = HttpContext.Items["UserId"] as string;
         if(currentUserId is null) return Unauthorized();
         
-        var currentUser = userRepository.GetAndInclude(u => u.Id == currentUserId, ["InvitedByToken"]).First();
+        var currentUser = userRepository.GetAndInclude(u => u.Id == currentUserId, ["InvitedByToken"]).FirstOrDefault();
+        
         if(currentUser is null)
         {
             return Unauthorized();
@@ -66,13 +67,13 @@ public class ProductController(
         var currentUserId = HttpContext.Items["UserId"] as string;
         if(currentUserId is null) return Unauthorized();
         
-        var currentUser = userRepository.GetAndInclude(u => u.Id == currentUserId, ["InvitedByToken", "InvitedByToken.InvitedByUser"]).First();
+        var currentUser = userRepository.GetAndInclude(u => u.Id == currentUserId, ["InvitedByToken", "InvitedByToken.InvitedByUser"]).FirstOrDefault();
         if(currentUser is null)
         {
             return Unauthorized();
         }
         
-        var product = repository.GetById(id);        
+        var product = repository.GetById(id);     
         if(product is null)
         {
             return NotFound();

@@ -6,7 +6,11 @@ using LivlReviews.Domain.Models;
 
 namespace LivlReviews.Domain.Invitation;
 
-public class InvitationSender(IInvitationTokenInventory invitationTokenInventory, IUserInventory userInventory, INotificationManager notificationManager) : IInvitationSender
+public class InvitationSender(
+    IInvitationTokenInventory invitationTokenInventory, 
+    IUserInventory userInventory, 
+    INotificationManager notificationManager,
+    string? frontendBaseUrl) : IInvitationSender
 {
 
     public async Task SendInvitation(string senderUserId, string email)
@@ -52,8 +56,7 @@ public class InvitationSender(IInvitationTokenInventory invitationTokenInventory
             new RecipientNotificationInvitation
             {
                 Contact = newUser.Email,
-                // TODO : Change this to the actual frontend URL
-                ActivationLink = $"https://localhost:3000/auth/password?token={randoToken}"
+                ActivationLink = $"{frontendBaseUrl}/auth/password?token={randoToken}"
             }
         ];
         await notificationManager.SendAccountInvitationNotification(recipientEmailInvitations);

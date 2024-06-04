@@ -36,7 +36,7 @@ public class RequestTests
             AdminId = UsersStub.Admin.Id
         };
     
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [], new NotificationManagerSpy());
         
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         StockManager stockManager = new StockManager(requestInventory, notificationManager);
@@ -72,7 +72,7 @@ public class RequestTests
             AdminId = "1"
         };
     
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [], new NotificationManagerSpy());
         
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         StockManager stockManager = new StockManager(requestInventory, notificationManager);        
@@ -119,7 +119,7 @@ public class RequestTests
             State = RequestState.Pending
         };
 
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest]);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest], new NotificationManagerSpy());
         
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         StockManager stockManager = new StockManager(requestInventory, notificationManager);
@@ -159,7 +159,7 @@ public class RequestTests
             State = RequestState.Pending
         };
 
-        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest]);
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest], new NotificationManagerSpy());
         
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         StockManager stockManager = new StockManager(requestInventory, notificationManager);
@@ -196,7 +196,7 @@ public class RequestTests
             ProductId = 1
         };
 
-        FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock> { stock }, new List<Request>());
+        FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock> { stock }, new List<Request>(), new NotificationManagerSpy());
         
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         StockManager stockManager = new StockManager(requestInventory, notificationManager);
@@ -207,7 +207,38 @@ public class RequestTests
         // Assert
         Assert.True(notificationManager.IsSendRequestFromUserToAdminNotificationCalled);
     }
-    
+
+    [Fact]
+    public async Task Send_notification_to_user_when_request_state_updated()
+    {
+        // Arrange
+        ProductStock stock = new ProductStock
+        {
+            AdminId = UsersStub.Admin.Id,
+            ProductId = 1
+        };
+        
+        Request firstRequest = new Request
+        {
+            Id = 1,
+            ProductId = 1,
+            AdminId = UsersStub.Admin.Id,
+            UserId = "2",
+            State = RequestState.Pending
+        };
+
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest], new NotificationManagerSpy());
+        
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, notificationManager);
+        
+        // Act
+        stockManager.UpdateRequestState(firstRequest, RequestState.Approved);
+
+        // Assert
+        Assert.True(notificationManager.IsSendNotificationToUserAboutRequestStateChangeCalled);
+    }
+
     [Fact]
     public async Task Should_Throw_Exception_When_Request_Product_Not_Requestable()
     {
@@ -227,7 +258,7 @@ public class RequestTests
             InvitedByToken = InvitationTokensStub.InvitationToken,
         };
 
-        FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request>());
+        FakeRequestInventory requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request>(), new NotificationManagerSpy());
         
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         StockManager stockManager = new StockManager(requestInventory, notificationManager);

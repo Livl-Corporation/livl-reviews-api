@@ -23,4 +23,12 @@ public class EmailManager(INotificationSender emailSender, INotificationContent 
         var message = emailContent.GenerateRequestFromUserToAdminContent(request);
         await emailSender.SendNotification(request.Admin.Email, subject, message);
     }
+    
+    public async Task SendNotificationToUserAboutRequestStateChange(Request request)
+    {
+        var subject = $"[{request.Product.Name}] - Changement d'état de votre demande de produit";
+        var message = emailContent.GenerateRequestStateChangeContent(request);
+        Console.WriteLine($"Sending email to {request.User.Email} with subject: {subject}");
+        await emailSender.SendNotification(request.User.Email, subject, message);
+    }
 }

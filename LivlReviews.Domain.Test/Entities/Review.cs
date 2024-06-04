@@ -68,7 +68,7 @@ public class ReviewTest
         var fakeClock = new FakeClock(new DateTime(2024, 5, 28));
 
         var reviewInventory = new FakeReviewInventory(request, fakeClock);
-        var requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request> { request });
+        var requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request> { request }, new NotificationManagerSpy());
         
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         StockManager stockManager = new StockManager(requestInventory, notificationManager);       
