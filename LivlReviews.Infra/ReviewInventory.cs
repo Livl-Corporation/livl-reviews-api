@@ -9,7 +9,6 @@ public class ReviewInventory(IRepository<Review> reviewRepository, IPaginatedRep
 {
     public bool IsReviewableDateReached(int requestId)
     {
-        Console.WriteLine(DateTime.Now);
         return requestRepository
             .GetBy(request => request.Id == requestId 
                               && DateTime.Now >= request.ReviewableAt).Count > 0;
