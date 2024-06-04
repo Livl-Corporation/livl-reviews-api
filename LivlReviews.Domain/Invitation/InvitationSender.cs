@@ -2,10 +2,12 @@ using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Exceptions;
+using LivlReviews.Email;
 
 namespace LivlReviews.Domain.Invitation;
 
-public class InvitationSender(IInvitationDelivery invitationDelivery, IUserInventory userInventory) : IInvitationSender
+public class InvitationSender(IInvitationTokenInventory invitationTokenInventory, IUserInventory userInventory, INotificationManager notificationManager) : IInvitationSender
 {
 
     public async Task SendInvitation(string senderUserId, string email)
@@ -14,19 +16,48 @@ public class InvitationSender(IInvitationDelivery invitationDelivery, IUserInven
         
         if(sender is null)
         {
-            throw new Exception("User not found");
+            throw new UserNotFoundException();
         }
         
-        if(sender.Role != Role.Admin)
+        if(!sender.IsAdmin)
         {
-            throw new Exception("Only admins can send invitations");
+            throw new UserNotAdministratorException();
+        }
+        
+        var userWithSameEmail = await userInventory.GetUserByEmail(email);
+        
+        if(userWithSameEmail is not null)
+        {
+            throw new UserAlreadyInvitedException();
         }
 
-        IUser invitedUser = await userInventory.CreateUserObject(sender, email);
         
-        // User invitedUser = new User { Email = email, Role = Role.User, InvitedById = senderUserId, InvitedBy = sender };
+        await userInventory.CreateUser(sender, email);
+        var newUser = await userInventory.GetUserByEmail(email);
+        if(newUser is null) throw new UserNotFoundException();
+
+        var randoToken = Guid.NewGuid().ToString();
+        var invitationToken = new InvitationToken
+        {
+            Token = randoToken,
+            InvitedByUserId = senderUserId,
+            InvitedUserId = newUser.Id,
+        };
+        var invitationTokenResult =  invitationTokenInventory.Add(invitationToken);
         
-        await invitationDelivery.DeliverInvitation(senderUserId, invitedUser);
+        newUser.InvitedByTokenId = invitationTokenResult.Id;
+        await userInventory.UpdateUser(newUser);
+
+        List<RecipientNotificationInvitation> recipientEmailInvitations =
+        [
+            new RecipientNotificationInvitation
+            {
+                Contact = newUser.Email,
+                // TODO : Change this to the actual frontend URL
+                ActivationLink = $"https://localhost:3000/auth/password?token={randoToken}"
+            }
+        ];
+        await notificationManager.SendAccountInvitationNotification(recipientEmailInvitations);
     }
 
 }
