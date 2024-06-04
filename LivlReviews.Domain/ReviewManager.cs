@@ -14,10 +14,10 @@ public class ReviewManager(IReviewInventory reviewInventory, IStockManager stock
     
     public Review CreateReview(Review review)
     {
-        // if(!IsReviewable(review.RequestId))
-        // {
-        //     throw new Exception("Request is not in a reviewable state. Cannot create review.");
-        // }
+        if(!IsReviewable(review.RequestId))
+        {
+            throw new Exception("Request is not in a reviewable state. Cannot create review.");
+        }
         
         var createdReview = reviewInventory.CreateReview(review);
         stockManager.UpdateRequestState(review.Request, RequestState.Completed);
