@@ -30,11 +30,6 @@ public class RequestInventory(IPaginatedRepository<Request> requestRepository, I
     {
         request.State = RequestState.Approved;
         
-        ProductStock stock = stockRepository
-            .GetBy(stock => stock.ProductId == request.ProductId && stock.AdminId == request.AdminId).First();
-
-        stockRepository.Delete(stock);
-        
         return requestRepository.Update(request);
     }
     
@@ -49,5 +44,13 @@ public class RequestInventory(IPaginatedRepository<Request> requestRepository, I
     {
         request.State = state;
         requestRepository.Update(request);
+    }
+    
+    public void RemoveStock(Request request)
+    {
+        ProductStock stock = stockRepository
+            .GetBy(stock => stock.ProductId == request.ProductId && stock.AdminId == request.AdminId).First();
+
+        stockRepository.Delete(stock);
     }
 }

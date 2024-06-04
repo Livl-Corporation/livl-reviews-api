@@ -128,4 +128,42 @@ public class RequestTests
         Assert.Equal(RequestState.Approved, requestInventory.requests[0].State);
         Assert.Equal(RequestState.Rejected, requestInventory.requests[1].State);
     }
+    
+    [Fact]
+    public void Approve_a_request_remove_stock()
+    {
+        // Arrange
+        FakeUser requester = new FakeUser
+        {
+            Id = "2",
+            Email = "User 2",
+            InvitedByTokenId = 1,
+            InvitedByToken = InvitationTokensStub.InvitationToken,
+        };
+        
+        ProductStock stock = new ProductStock
+        {
+            AdminId = "1",
+            ProductId = 1
+        };
+        
+        Request firstRequest = new Request
+        {
+            Id = 1,
+            ProductId = 1,
+            AdminId = "1",
+            UserId = "2",
+            State = RequestState.Pending
+        };
+
+        FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest]);
+        
+        StockManager stockManager = new StockManager(requestInventory);
+        
+        // Act
+        Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);
+        
+        // Assert
+        Assert.Empty(requestInventory.stocks);
+    }
 }

@@ -43,4 +43,10 @@ public class FakeRequestInventory(List<ProductStock> stocks, List<Request> reque
         requests[idx].State = RequestState.Rejected;
         return requests[idx];
     }
+    
+    public void RemoveStock(Request request)
+    {
+        var idx = stocks.FindIndex(s => s.ProductId == request.ProductId && s.AdminId == request.AdminId);
+        stocks.RemoveAt(idx);
+    }
 }

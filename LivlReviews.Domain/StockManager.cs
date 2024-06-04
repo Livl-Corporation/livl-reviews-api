@@ -54,6 +54,8 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
         }
         
         request.AdminMessage = message;
+        
+        requestInventory.RemoveStock(request);
         return requestInventory.ApproveRequest(request);
     }
 }
