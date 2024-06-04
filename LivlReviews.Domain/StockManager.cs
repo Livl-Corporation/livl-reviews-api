@@ -25,13 +25,13 @@ public class StockManager(IRequestInventory requestInventory, INotificationManag
             throw new Exception("This product is not requestable by this user.");
         }
         
-        Request request = new Request(new Clock())
+        Request request = new Request()
         {
             ProductId = product.Id,
             AdminId = requester.InvitedByToken.InvitedByUserId,
             UserId = requester.Id,
             UserMessage = message,
-            State = RequestState.Pending
+            State = RequestState.Pending,
         };
         
         var res = requestInventory.CreateProductRequest(request);

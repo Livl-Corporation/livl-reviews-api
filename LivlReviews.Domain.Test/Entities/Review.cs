@@ -15,11 +15,12 @@ public class ReviewTest
         // Arrange
         var currentTime = new DateTime(2024, 5, 28);
         var fakeClock = new FakeClock(currentTime);
-        var request = new Request(fakeClock)
+        var request = new Request()
         {
             Id = 1,
             State = RequestState.Received,
-            ReviewableAt = new DateTime(2024, 5, 20) 
+            ReviewableAt = new DateTime(2024, 5, 20),
+            Clock = fakeClock
         };
 
         // Act
@@ -35,11 +36,12 @@ public class ReviewTest
         // Arrange
         var currentTime = new DateTime(2024, 5, 20);
         var fakeClock = new FakeClock(currentTime);
-        var request = new Request(fakeClock)
+        var request = new Request()
         {
             Id = 1,
             State = RequestState.Received,
-            ReviewableAt = new DateTime(2024, 5, 23) 
+            ReviewableAt = new DateTime(2024, 5, 23),
+            Clock = fakeClock
         };
 
         // Act
@@ -53,11 +55,12 @@ public class ReviewTest
     public void Set_Request_State_To_Completed_When_Review_Created()
     {
         // Arrange
-        var request = new Request(new FakeClock(new DateTime(2024, 5, 28)))
+        var request = new Request()
         {
             Id = 1,
             State = RequestState.Received,
-            ReviewableAt = new DateTime(2024, 5, 20) 
+            ReviewableAt = new DateTime(2024, 5, 20),
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
         
         var reviewInventory = new FakeReviewInventory();
