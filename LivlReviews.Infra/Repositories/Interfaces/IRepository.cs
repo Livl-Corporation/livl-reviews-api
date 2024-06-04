@@ -1,4 +1,6 @@
 
+using System.Linq.Expressions;
+
 namespace LivlReviews.Infra.Repositories.Interfaces;
 
 public interface IRepository<T> where T : class
@@ -12,5 +14,5 @@ public interface IRepository<T> where T : class
     void AddRange(List<T> entities);
     T Update(T entity);
     bool Delete(T entity);
-    bool DeleteBy(Func<T, bool> predicate);
+    bool DeleteBy(Expression<Func<T, bool>> predicate);
 }

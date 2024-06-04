@@ -36,8 +36,9 @@ public class RequestTests
         };
     
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         
-        StockManager stockManager = new StockManager(requestInventory);
+        StockManager stockManager = new StockManager(requestInventory, stockInventory);
         
         // Act
         bool isRequestable = stockManager.IsRequestable(product, requester);
@@ -71,8 +72,9 @@ public class RequestTests
         };
     
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         
-        StockManager stockManager = new StockManager(requestInventory);
+        StockManager stockManager = new StockManager(requestInventory, stockInventory);
         
         // Act
         bool isRequestable = stockManager.IsRequestable(product, admin);
@@ -118,8 +120,9 @@ public class RequestTests
         };
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest]);
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         
-        StockManager stockManager = new StockManager(requestInventory);
+        StockManager stockManager = new StockManager(requestInventory, stockInventory);
         
         // Act
         Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);
@@ -157,8 +160,9 @@ public class RequestTests
         };
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest]);
+        FakeStockInventory stockInventory = new FakeStockInventory([stock]);
         
-        StockManager stockManager = new StockManager(requestInventory);
+        StockManager stockManager = new StockManager(requestInventory, stockInventory);
         
         // Act
         Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);

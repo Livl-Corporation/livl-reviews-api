@@ -72,6 +72,9 @@ builder.Services.AddScoped<IRepository<Review>, EntityRepository<Review>>();
 builder.Services.AddScoped<IRequestInventory, RequestInventory>();
 builder.Services.AddScoped<IStockManager, StockManager>();
 builder.Services.AddScoped<IRepository<User>, EntityRepository<User>>();
+builder.Services.AddScoped<IImportManager, ImportManager>();
+builder.Services.AddScoped<IImportInventory, ImportInventory>();
+builder.Services.AddScoped<IRepository<Import>, EntityRepository<Import>>();
 
 builder.Services.AddScoped<IReviewManager, ReviewManager>();
 builder.Services.AddScoped<IReviewInventory, ReviewInventory>();

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -88,7 +89,7 @@ public class EntityRepository<T> : IRepository<T> where T : class
         return true;
     }
     
-    public bool DeleteBy(Func<T, bool> predicate)
+    public bool DeleteBy(Expression<Func<T, bool>> predicate)
     {
         DbSet.RemoveRange(DbSet.Where(predicate));
 

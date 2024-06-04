@@ -5,7 +5,7 @@ using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain;
 
-public class StockManager(IRequestInventory requestInventory) : IStockManager
+public class StockManager(IRequestInventory requestInventory, IStockInventory stockInventory) : IStockManager
 {
     public bool IsRequestable(Product product, IUser requester)
     {
@@ -57,5 +57,25 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
         
         requestInventory.RemoveStock(request);
         return requestInventory.ApproveRequest(request);
+    }
+    
+    public void UpdateStocks(Product[] products, Import import)
+    {
+        foreach (var product in products)
+        {
+            ProductStock stock = new ProductStock
+            {
+                ProductId = product.Id,
+                AdminId = import.AdminId,
+                ImportId = import.Id
+            };
+            
+            stockInventory.CreateOrUpdate(stock);
+        }
+    }
+    
+    public void RemoveStocksFromPreviousImport(Import import)
+    {
+        stockInventory.RemoveStocksFromPreviousImports(import);
     }
 }

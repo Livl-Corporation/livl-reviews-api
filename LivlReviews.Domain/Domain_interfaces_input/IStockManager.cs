@@ -9,4 +9,6 @@ public interface IStockManager
     public Request RequestProduct(Product product, IUser requester, string? message = null);
     public Request ApproveRequest(Request request, IUser requester, string? message = null);
     public void UpdateRequestState(Request request, RequestState state);
+    public void UpdateStocks(Product[] products, Import import);
+    public void RemoveStocksFromPreviousImport(Import import);
 }

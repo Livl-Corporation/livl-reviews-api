@@ -68,7 +68,8 @@ public class ReviewTest
 
         var reviewInventory = new FakeReviewInventory(request, fakeClock);
         var requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request> { request });
-        var stockManager = new StockManager(requestInventory);
+        var stockInventory = new FakeStockInventory(new List<ProductStock>());
+        var stockManager = new StockManager(requestInventory, stockInventory);
         
         var reviewManager = new ReviewManager(reviewInventory, stockManager);
         
