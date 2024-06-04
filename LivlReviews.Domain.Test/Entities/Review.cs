@@ -2,6 +2,7 @@
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Test.Clock;
 using LivlReviews.Domain.Test.Fakes;
+using LivlReviews.Domain.Test.Spies;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
 
@@ -68,7 +69,9 @@ public class ReviewTest
 
         var reviewInventory = new FakeReviewInventory(request, fakeClock);
         var requestInventory = new FakeRequestInventory(new List<ProductStock>(), new List<Request> { request });
-        var stockManager = new StockManager(requestInventory);
+        
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, notificationManager);       
         
         var reviewManager = new ReviewManager(reviewInventory, stockManager);
         

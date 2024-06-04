@@ -1,6 +1,4 @@
-﻿using LivlReviews.Domain.Entities;
-
-namespace LivlReviews.Email;
+﻿namespace LivlReviews.Domain.Models;
 
 public class RecipientNotificationInvitation
 {

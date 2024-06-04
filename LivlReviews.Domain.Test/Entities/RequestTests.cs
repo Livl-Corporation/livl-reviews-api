@@ -1,6 +1,7 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Test.Fakes;
+using LivlReviews.Domain.Test.Spies;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
 
@@ -37,7 +38,8 @@ public class RequestTests
     
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
         
-        StockManager stockManager = new StockManager(requestInventory);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, notificationManager);
         
         // Act
         bool isRequestable = stockManager.IsRequestable(product, requester);
@@ -72,8 +74,8 @@ public class RequestTests
     
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], []);
         
-        StockManager stockManager = new StockManager(requestInventory);
-        
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, notificationManager);        
         // Act
         bool isRequestable = stockManager.IsRequestable(product, admin);
 
@@ -119,7 +121,8 @@ public class RequestTests
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest]);
         
-        StockManager stockManager = new StockManager(requestInventory);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, notificationManager);
         
         // Act
         Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);
@@ -158,7 +161,8 @@ public class RequestTests
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest]);
         
-        StockManager stockManager = new StockManager(requestInventory);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+        StockManager stockManager = new StockManager(requestInventory, notificationManager);
         
         // Act
         Request approvedRequest = stockManager.ApproveRequest(firstRequest, requester);

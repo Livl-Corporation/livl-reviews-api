@@ -1,9 +1,8 @@
 using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
-using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Exceptions;
-using LivlReviews.Email;
+using LivlReviews.Domain.Models;
 
 namespace LivlReviews.Domain.Invitation;
 

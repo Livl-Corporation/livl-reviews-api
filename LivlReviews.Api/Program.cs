@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
 using LivlReviews.Email;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
@@ -70,12 +69,12 @@ builder.Services.AddScoped<IPaginatedRepository<Request>, PaginatedEntityReposit
 builder.Services.AddScoped<IRepository<ProductStock>, EntityRepository<ProductStock>>();
 builder.Services.AddScoped<IRepository<Review>, EntityRepository<Review>>();
 builder.Services.AddScoped<IRequestInventory, RequestInventory>();
+builder.Services.AddScoped<INotificationManager, EmailManager>();
+builder.Services.AddScoped<INotificationContent, EmailContent>();
 builder.Services.AddScoped<IStockManager, StockManager>();
 builder.Services.AddScoped<IRepository<User>, EntityRepository<User>>();
-
 builder.Services.AddScoped<IReviewManager, ReviewManager>();
 builder.Services.AddScoped<IReviewInventory, ReviewInventory>();
-
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
