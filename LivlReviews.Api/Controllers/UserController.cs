@@ -22,7 +22,14 @@ namespace LivlReviews.Api.Controllers;
 
 [ApiController]
 [Route("/[controller]")]
-public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository, INotificationSender notificationSender, INotificationContent notificationContent) : ControllerBase
+public class UsersController(
+    UserManager<User> userManager, 
+    AppDbContext context, 
+    TokenService tokenService, 
+    IRepository<InvitationToken> invitationTokenRepository, 
+    INotificationSender notificationSender, 
+    INotificationContent notificationContent, 
+    IConfiguration configuration) : ControllerBase
 {
 
     [HttpPost]
@@ -41,10 +48,8 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
             IInvitationSender invitationSender = new InvitationSender(
                 new InvitationTokenInventory(invitationTokenRepository),
                 new UserInventory(userManager),
-                new EmailManager(
-                    notificationSender,
-                    notificationContent
-                )
+                new EmailManager(notificationSender, notificationContent),
+                configuration["Frontend:BaseUrl"]
             );
             await invitationSender.SendInvitation(currentUserId, request.Email);
         } catch (Exception e)

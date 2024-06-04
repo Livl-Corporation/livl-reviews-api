@@ -24,7 +24,7 @@ public class InvitationTests
         IUserInventory userInventory = new FakeUserInventory([sender]);
         NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         
-        IInvitationSender invitationSender = new InvitationSender(invitationTokenInventory, userInventory, notificationManager);
+        IInvitationSender invitationSender = new InvitationSender(invitationTokenInventory, userInventory, notificationManager, "http://localhost:3000");
 
         string invitedEmail = "invitedUser@email.com";
         
@@ -59,7 +59,8 @@ public class InvitationTests
         IInvitationSender invitationSender = new InvitationSender(
             invitationTokenInventory,
             userInventory,
-            notificationManager
+            notificationManager,
+            "http://localhost:3000"
         );
 
         // Act
