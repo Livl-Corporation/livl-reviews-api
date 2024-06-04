@@ -36,9 +36,11 @@ public class ProductController(
         PaginationParameters paginationParameters = new PaginationParameters { page = page, pageSize = pageSize };
         
         PaginatedResult<Product> products = repository.GetPaginated(
-            product => (category == null || product.CategoryId == category) && product.Name.Contains(search) && product.Stocks.Any(stock => stock.AdminId == currentUser.InvitedByToken.InvitedByUserId), 
+            product => (category == null || product.CategoryId == category || product.Category.ParentId == category) && 
+                       product.Name.Contains(search) && 
+                       product.Stocks.Any(stock => stock.AdminId == currentUser.InvitedByToken.InvitedByUserId), 
             paginationParameters,
-            ["Stocks"]
+            ["Stocks", "Category"]
         );
         
         return Ok(products);
