@@ -1,11 +1,11 @@
+using LivlReviews.Api.Attributes;
 using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Models;
+using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Api.Controllers;
 
@@ -15,7 +15,7 @@ namespace LivlReviews.Api.Controllers;
 public class ProductController(
     IPaginatedRepository<Product> repository,
     IStockManager stockManager,
-    UserManager<User> userManager
+    IRepository<User> userRepository
     ) : ControllerBase
 {
     [HttpGet]
@@ -46,9 +46,13 @@ public class ProductController(
     }
     
     [HttpPost("{id}/request")]
+    [UserIdClaim]
     public async Task<ActionResult<Request>> RequestProduct(int id)
     {
-        var currentUser = await userManager.GetUserAsync(User);
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
+        var currentUser = userRepository.GetAndInclude(u => u.Id == currentUserId, ["InvitedByToken"]).First();
         if(currentUser is null)
         {
             return Unauthorized();

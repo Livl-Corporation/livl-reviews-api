@@ -1,10 +1,11 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using LivlReviews.Email.Interfaces;
 using Microsoft.Extensions.Options;
 
 namespace LivlReviews.Email;
 
-public class SmtpEmailSender(IOptions<SmtpSettings> smtpSettings) : IEmailSender
+public class SmtpEmailSender(IOptions<SmtpSettings> smtpSettings, string password) : IEmailSender
 {
     private readonly SmtpSettings _smtpSettings = smtpSettings.Value;
 
@@ -12,7 +13,7 @@ public class SmtpEmailSender(IOptions<SmtpSettings> smtpSettings) : IEmailSender
     {
         using var client = new SmtpClient(_smtpSettings.Server, _smtpSettings.Port)
         {
-            Credentials = new NetworkCredential(_smtpSettings.Username, _smtpSettings.Password),
+            Credentials = new NetworkCredential(_smtpSettings.Username, password),
             EnableSsl = _smtpSettings.EnableSsl
         };
 

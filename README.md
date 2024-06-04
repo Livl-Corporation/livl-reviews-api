@@ -23,3 +23,21 @@
 - The SMTP settings are already configured in the `appsettings.json` file at the root of the LivlReviewsApi project.
 
 > For the develpment, the server is "localhost" and the port is "1025".
+
+
+## Setup SMTP server (development)
+
+The password should be secret and not stored in the source code. To do this, we can use the `dotnet user-secrets` tool.
+
+- Run the following command **in the LivlReviews.Api project directory** to init secrets :
+```
+dotnet user-secrets init
+```
+
+- Then run the following command to set the password :
+```
+dotnet user-secrets set "Smtp:Password" "your_password_here"
+```
+
+
+

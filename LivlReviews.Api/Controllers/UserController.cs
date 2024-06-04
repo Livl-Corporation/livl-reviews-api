@@ -9,21 +9,20 @@ using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Invitation;
+using LivlReviews.Email;
 using LivlReviews.Infra;
 using LivlReviews.Infra.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using User = LivlReviews.Infra.Data.User;
 
 namespace LivlReviews.Api.Controllers;
 
 [ApiController]
 [Route("/[controller]")]
-public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository, IRepository<User> userRepository) : ControllerBase
+public class UsersController(UserManager<User> userManager, AppDbContext context, TokenService tokenService, ILogger<UsersController> logger, IRepository<InvitationToken> invitationTokenRepository, INotificationSender notificationSender, INotificationContent notificationContent) : ControllerBase
 {
 
     [HttpPost]
@@ -36,12 +35,16 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         
         var currentUserId = HttpContext.Items["UserId"] as string;
         if(currentUserId is null) return Unauthorized();
-
+        
         try
         {
             IInvitationSender invitationSender = new InvitationSender(
                 new InvitationTokenInventory(invitationTokenRepository),
-                new UserInventory(userManager, userRepository)
+                new UserInventory(userManager),
+                new EmailManager(
+                    notificationSender,
+                    notificationContent
+                )
             );
             await invitationSender.SendInvitation(currentUserId, request.Email);
         } catch (Exception e)
@@ -63,7 +66,7 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         {
             IInvitationConfirmator invitationConfirmator = new InvitationConfirmator(
                 new InvitationTokenInventory(invitationTokenRepository),
-                new UserInventory(userManager, userRepository)
+                new UserInventory(userManager)
             );
             await invitationConfirmator.ConfirmUser(request.Token, request.Password);
 
@@ -84,7 +87,7 @@ public class UsersController(UserManager<User> userManager, AppDbContext context
         if (currentUserId is null) return Unauthorized();
 
         IInvitationTokenInventory invitationTokenInventory = new InvitationTokenInventory(invitationTokenRepository);
-        IUserInventory userInventory = new UserInventory(userManager, userRepository);
+        IUserInventory userInventory = new UserInventory(userManager);
         IAdministrationPanel administrationPanel = new AdministrationPanel(invitationTokenInventory, userInventory);
 
         try

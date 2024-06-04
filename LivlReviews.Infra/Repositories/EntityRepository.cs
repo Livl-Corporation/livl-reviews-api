@@ -23,10 +23,22 @@ public class EntityRepository<T> : IRepository<T> where T : class
     { 
         return DbSet.ToList();
     }
-    
+
     public List<T> GetBy(Func<T, bool> predicate)
     {
         return DbSet.Where(predicate).ToList();
+    }
+    
+    public List<T> GetAndInclude(Func<T, bool> predicate, string[] include)
+    {
+        var query = DbSet.AsNoTracking();
+        
+        foreach (var inc in include)
+        {
+            query = query.Include(inc);
+        }
+        
+        return query.Where(predicate).ToList();
     }
 
     public T GetByFirstOrDefault(Func<T, bool> predicate)

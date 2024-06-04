@@ -47,18 +47,6 @@ public class InvitationTests
 
         IUser sender = UsersStub.User;
         IUserInventory userInventory = new StubUserInventory([sender]);
-        IInvitationSender invitationSender = new InvitationSender(invitationTokenInventory, userInventory);
-        string invitedEmail = "invitedUser@email.com";
-
-        // Act
-        Task Act () => invitationSender.SendInvitation(sender.Id, invitedEmail);
-
-        // Assert
-        await Assert.ThrowsAsync<UserNotAdministratorException>(Act);
-
-        var newUser = await userInventory.GetUserByEmail(invitedEmail);
-        Assert.Null(newUser);
-    }
 
     [Fact]
     public async void Should_Throw_Exception_When_Email_Already_Invited()

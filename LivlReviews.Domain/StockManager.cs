@@ -36,4 +36,21 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
 
         return res;
     }
+    
+    public void UpdateRequestState(Request request, RequestState state)
+    {
+        requestInventory.UpdateRequestState(request, state);
+    }
+
+    public Request ApproveRequest(Request request, IUser requester)
+    {
+        List<Request> requests = requestInventory.GetSimilarPendingRequests(request);
+
+        foreach (Request req in requests)
+        {
+            requestInventory.RejectRequest(req);
+        }
+        
+        return requestInventory.ApproveRequest(request);
+    }
 }

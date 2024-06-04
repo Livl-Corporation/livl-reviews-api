@@ -1,7 +1,7 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 
-namespace LivlReviews.Domain.Test;
+namespace LivlReviews.Domain.Test.Fakes;
 
 public class FakeUser : IUser
 {

@@ -16,13 +16,14 @@ using LivlReviews.Infra.Data;
 using LivlReviews.Infra.Repositories;
 using LivlReviews.Infra.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using User = LivlReviews.Infra.Data.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(option =>
@@ -64,13 +65,15 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddScoped<TokenService, TokenService>();
 builder.Services.AddScoped<IPaginatedRepository<Product>, PaginatedEntityRepository<Product>>();
 builder.Services.AddScoped<IRepository<Category>, EntityRepository<Category>>();
-builder.Services.AddScoped<IRepository<User>, EntityRepository<User>>();
 builder.Services.AddScoped<IRepository<InvitationToken>, EntityRepository<InvitationToken>>();
-builder.Services.AddScoped<IRepository<Request>, EntityRepository<Request>>();
+builder.Services.AddScoped<IPaginatedRepository<Request>, PaginatedEntityRepository<Request>>();
 builder.Services.AddScoped<IRepository<ProductStock>, EntityRepository<ProductStock>>();
+builder.Services.AddScoped<IRepository<Review>, EntityRepository<Review>>();
 builder.Services.AddScoped<IRequestInventory, RequestInventory>();
 builder.Services.AddScoped<IStockManager, StockManager>();
-builder.Services.AddScoped<UserManager<User>, UserManager<User>>();
+
+builder.Services.AddScoped<IReviewManager, ReviewManager>();
+builder.Services.AddScoped<IReviewInventory, ReviewInventory>();
 
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
@@ -123,10 +126,12 @@ builder.Services.AddAuthentication(options =>
     });
 
 
-builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
-builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
-builder.Services.AddTransient<EmailService>();
-builder.Services.AddTransient<IEmailContentService, EmailContentService>();
+var smtpSettings = builder.Configuration.GetSection("SmtpSettings");
+var smtpPassword = builder.Configuration["Smtp:Password"];
+
+builder.Services.Configure<SmtpSettings>(smtpSettings);
+builder.Services.AddTransient<INotificationSender, SmtpEmailSender>(provider => new SmtpEmailSender(provider.GetRequiredService<IOptions<SmtpSettings>>(), smtpPassword));
+builder.Services.AddTransient<INotificationContent, EmailContent>();
 
 var app = builder.Build();
 
