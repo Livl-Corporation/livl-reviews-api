@@ -16,7 +16,7 @@ public class CategoryController(IRepository<Category> categoriesRepository, User
     [HttpGet]
     public ActionResult<IEnumerable<Category>> GetAllCategories()
     {
-        return Ok(categoriesRepository.GetAll());
+        return Ok(categoriesRepository.GetBy(c => c.ParentId == null));
     }
 
     [HttpGet("{id}")]
