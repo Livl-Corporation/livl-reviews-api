@@ -12,6 +12,11 @@ public class User : IdentityUser, IUser
     public List<Request> ReceivedRequests { get; set; }
     public List<ProductStock> Stocks { get; set; }
     public bool IsAdmin => Role == Role.Admin;
+    public string GetRelevantAdminId()
+    {
+        return IsAdmin ? Id : InvitedByToken?.InvitedByUserId ?? "";
+    }
+
     public InvitationToken? InvitedByToken { get; set; }
     public int? InvitedByTokenId { get; set; }
     public List<InvitationToken> CreatedInvitationTokens { get; set; }

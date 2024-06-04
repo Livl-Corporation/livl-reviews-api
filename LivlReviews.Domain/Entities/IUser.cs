@@ -17,6 +17,8 @@ public interface IUser
     public List<InvitationToken> CreatedInvitationTokens { get; set; }
     
     public bool IsAdmin => Role == Role.Admin;
+
+    public string GetRelevantAdminId();
     
     public static bool Can(Role role, Operation operation)
     {
