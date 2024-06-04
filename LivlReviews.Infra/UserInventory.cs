@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace LivlReviews.Infra;
 
-public class UserInventory (UserManager<User> userManager, IRepository<User> userRepository) : IUserInventory
+public class UserInventory (UserManager<User> userManager) : IUserInventory
 {
     
     public async Task<IUser?> GetUserById(string userId)

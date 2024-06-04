@@ -3,10 +3,11 @@ using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Exceptions;
+using LivlReviews.Email;
 
 namespace LivlReviews.Domain.Invitation;
 
-public class InvitationSender(IInvitationTokenInventory invitationTokenInventory, IUserInventory userInventory) : IInvitationSender
+public class InvitationSender(IInvitationTokenInventory invitationTokenInventory, IUserInventory userInventory, INotificationManager notificationManager) : IInvitationSender
 {
 
     public async Task SendInvitation(string senderUserId, string email)
@@ -47,7 +48,16 @@ public class InvitationSender(IInvitationTokenInventory invitationTokenInventory
         newUser.InvitedByTokenId = invitationTokenResult.Id;
         await userInventory.UpdateUser(newUser);
 
-        // TODO : We should send the email from there too :)
+        List<RecipientNotificationInvitation> recipientEmailInvitations =
+        [
+            new RecipientNotificationInvitation
+            {
+                Contact = newUser.Email,
+                // TODO : Change this to the actual frontend URL
+                ActivationLink = $"https://localhost:3000/auth/password?token={randoToken}"
+            }
+        ];
+        await notificationManager.SendAccountInvitationNotification(recipientEmailInvitations);
     }
 
 }

@@ -25,9 +25,5 @@
     <ItemGroup>
         <ProjectReference Include="..\LivlReviews.Domain\LivlReviews.Domain.csproj"/>
     </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Spies\" />
-    </ItemGroup>
 
 </Project>

@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.0-preview.3.24172.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LivlReviews.Domain\LivlReviews.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

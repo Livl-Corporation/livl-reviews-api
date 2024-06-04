@@ -2,9 +2,9 @@
 
 namespace LivlReviews.Email;
 
-public class EmaiManager(SmtpEmailSender emailSender, EmailContent emailContent) : INotificationManager
+public class EmailManager(INotificationSender emailSender, INotificationContent emailContent) : INotificationManager
 {
-    public async Task SendAccountInvitationNotification(List<RecipientEmailInvitation> recipientEmailInvitations)
+    public async Task SendAccountInvitationNotification(List<RecipientNotificationInvitation> recipientEmailInvitations)
     {
         var subject = "Vous êtes invité à rejoindre LivlReviews!";
 

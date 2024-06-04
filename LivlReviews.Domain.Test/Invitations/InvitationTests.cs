@@ -4,7 +4,9 @@ using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
 using LivlReviews.Domain.Exceptions;
 using LivlReviews.Domain.Invitation;
+using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.mocks;
+using LivlReviews.Domain.Test.Spies;
 using LivlReviews.Domain.Test.Stubs;
 using Xunit;
 
@@ -19,9 +21,10 @@ public class InvitationTests
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory([]);
 
         IUser sender = UsersStub.Admin;
-        IUserInventory userInventory = new StubUserInventory([sender]);
+        IUserInventory userInventory = new FakeUserInventory([sender]);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
         
-        IInvitationSender invitationSender = new InvitationSender(invitationTokenInventory, userInventory);
+        IInvitationSender invitationSender = new InvitationSender(invitationTokenInventory, userInventory, notificationManager);
 
         string invitedEmail = "invitedUser@email.com";
         
@@ -37,30 +40,26 @@ public class InvitationTests
         Assert.NotNull(invitationToken);
         Assert.Equal(sender.Id, invitationToken.InvitedByUserId);
         Assert.Equal(newUser.Id, invitationToken.InvitedUserId);
+        
+        Assert.True(notificationManager.IsSendAccountInvitationNotificationCalled);
     }
-
-    [Fact]
-    public async void Should_Throw_Exception_When_Sender_Is_Not_Admin()
-    {
-        // Arrange
-        IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory([]);
-
-        IUser sender = UsersStub.User;
-        IUserInventory userInventory = new StubUserInventory([sender]);
 
     [Fact]
     public async void Should_Throw_Exception_When_Email_Already_Invited()
     {
         // Arrange
-        IUserInventory userInventory = new StubUserInventory([
+        IUserInventory userInventory = new FakeUserInventory([
             UsersStub.User,
             UsersStub.Admin,
         ]);
         IInvitationTokenInventory invitationTokenInventory = new MockInvitationTokenInventory([]);
+        NotificationManagerSpy notificationManager = new NotificationManagerSpy();
+
 
         IInvitationSender invitationSender = new InvitationSender(
             invitationTokenInventory,
-            userInventory
+            userInventory,
+            notificationManager
         );
 
         // Act
@@ -68,6 +67,7 @@ public class InvitationTests
 
         // Assert
         await Assert.ThrowsAsync<UserAlreadyInvitedException>(Act);
+        Assert.False(notificationManager.IsSendAccountInvitationNotificationCalled);
     }
 
 }
