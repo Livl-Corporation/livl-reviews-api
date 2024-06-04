@@ -114,4 +114,41 @@ public class RequestController(IPaginatedRepository<Request> repository, UserMan
         
         return Ok(request);
     }
+    
+    [HttpPost("{id}/received")]
+    [UserIdClaim]
+    public async Task<ActionResult<Request>> ReceivedRequest(int id)
+    {
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
+        var currentUser = await userManager.FindByIdAsync(currentUserId);
+        if(currentUser is null)
+        {
+            return Unauthorized();
+        }
+
+        Request request = repository.GetById(id);
+        if (request == null)
+        {
+            return NotFound();
+        }
+        
+        if (!Domain.Entities.Request.Can(currentUser.Role, Operation.UPDATE))
+        {
+            return Forbid();
+        }
+        
+        if(request.State != RequestState.Approved)
+        {
+            return BadRequest("Request must be approved before being received.");
+        }
+        
+        request.State = RequestState.Received;
+        request.ReviewableAt = DateTime.Today.AddDays(7);
+        
+        repository.Update(request);
+        
+        return Ok(request);
+    }
 }

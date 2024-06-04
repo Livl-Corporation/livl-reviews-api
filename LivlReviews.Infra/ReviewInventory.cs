@@ -7,14 +7,19 @@ namespace LivlReviews.Infra;
 
 public class ReviewInventory(IRepository<Review> reviewRepository, IPaginatedRepository<Request> requestRepository) : IReviewInventory
 {
-    public bool IsReviewable(int requestId)
+    public bool IsReviewableDateReached(int requestId)
     {
-        var sevenDaysAgo = DateTime.Now.AddDays(-7);
-        
+        Console.WriteLine(DateTime.Now);
         return requestRepository
             .GetBy(request => request.Id == requestId 
-                              && request.State == RequestState.Received
-                              && request.ReceivedAt <= sevenDaysAgo).Count > 0;
+                              && DateTime.Now >= request.ReviewableAt).Count > 0;
+    }
+    
+    public bool HasStatusReceived(int requestId)
+    {
+        return requestRepository
+            .GetBy(request => request.Id == requestId 
+                              && request.State == RequestState.Received).Count > 0;
     }
 
     public Review CreateReview(Review review)
