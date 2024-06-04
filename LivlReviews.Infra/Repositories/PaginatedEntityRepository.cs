@@ -37,7 +37,14 @@ public class PaginatedEntityRepository<T>(AppDbContext context) : EntityReposito
     
     public PaginatedResult<T> GetPaginated(Func<T, bool> predicate, PaginationParameters paginationParameters, string[] include)
     {
-        int total = DbSet.Count(predicate);
+        var totalQuery = DbSet.AsQueryable();
+        
+        foreach (var inc in include)
+        {
+            totalQuery = totalQuery.Include(inc);    
+        }
+        
+        int total = totalQuery.Count(predicate);
         int totalPages = (int)Math.Ceiling((double)total / paginationParameters.pageSize);
         var query = DbSet.AsQueryable();
         
