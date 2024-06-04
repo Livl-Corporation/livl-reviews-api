@@ -73,9 +73,15 @@ builder.Services.AddScoped<IRequestInventory, RequestInventory>();
 builder.Services.AddScoped<IStockManager, StockManager>();
 builder.Services.AddScoped<IRepository<User>, EntityRepository<User>>();
 builder.Services.AddScoped<IImportManager, ImportManager>();
+builder.Services.AddScoped<IStockManager, StockManager>();
+builder.Services.AddScoped<IImportInventory, ImportInventory>();
+builder.Services.AddScoped<ICategoryInventory, CategoryInventory>();
+builder.Services.AddScoped<IProductInventory, ProductInventory>();
+builder.Services.AddScoped<IStockInventory, StockInventory>();
 builder.Services.AddScoped<IImportInventory, ImportInventory>();
 builder.Services.AddScoped<IRepository<Import>, EntityRepository<Import>>();
-
+builder.Services.AddScoped<IRepository<Category>, EntityRepository<Category>>();
+builder.Services.AddScoped<IRepository<Product>, EntityRepository<Product>>();
 builder.Services.AddScoped<IReviewManager, ReviewManager>();
 builder.Services.AddScoped<IReviewInventory, ReviewInventory>();
 
