@@ -9,7 +9,7 @@ public class StockManager(IRequestInventory requestInventory) : IStockManager
 {
     public bool IsRequestable(Product product, IUser requester)
     {
-        if (requester.InvitedByTokenId is null)
+        if (requester.InvitedByTokenId is null || requester.InvitedByToken is null)
         {
             return false;
         }   

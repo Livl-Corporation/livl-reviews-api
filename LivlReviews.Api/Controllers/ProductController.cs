@@ -20,14 +20,25 @@ public class ProductController(
     ) : ControllerBase
 {
     [HttpGet]
+    [UserIdClaim]
     public ActionResult<PaginatedResult<Product>> GetProducts(int page = 1, int pageSize = 10, string search = "", int? category = null)
     {
+        var currentUserId = HttpContext.Items["UserId"] as string;
+        if(currentUserId is null) return Unauthorized();
+        
+        var currentUser = userRepository.GetAndInclude(u => u.Id == currentUserId, ["InvitedByToken"]).First();
+        if(currentUser is null)
+        {
+            return Unauthorized();
+        }
+        
         // TODO : check that only the products from the admin who invite the user is returned
         PaginationParameters paginationParameters = new PaginationParameters { page = page, pageSize = pageSize };
         
         PaginatedResult<Product> products = repository.GetPaginated(
-            product => (category == null || product.CategoryId == category) && product.Name.Contains(search), 
-            paginationParameters
+            product => (category == null || product.CategoryId == category) && product.Name.Contains(search) && product.Stocks.Any(stock => stock.AdminId == currentUser.InvitedByToken.InvitedByUserId), 
+            paginationParameters,
+            ["Stocks"]
         );
         
         return Ok(products);
