@@ -31,4 +31,11 @@ public class EmailManager(INotificationSender emailSender, INotificationContent 
         Console.WriteLine($"Sending email to {request.User.Email} with subject: {subject}");
         await emailSender.SendNotification(request.User.Email, subject, message);
     }
+    
+    public async Task SendNotificationToAdminWhenReviewSubmitted(Review review)
+    {
+        var subject = $"[{review.Request.Product.Name}] - Nouvelle review reçue";
+        var message = emailContent.GenerateReceivedReviewContent(review);
+        await emailSender.SendNotification(review.Request.Admin.Email, subject, message);
+    }
 }

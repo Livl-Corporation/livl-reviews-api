@@ -5,33 +5,22 @@ using LivlReviews.Domain.Enums;
 
 namespace LivlReviews.Domain;
 
-public class ReviewManager(IReviewInventory reviewInventory, IStockManager stockManager) : IReviewManager
+public class ReviewManager(IReviewInventory reviewInventory, IStockManager stockManager, INotificationManager notificationManager) : IReviewManager
 {
-    public bool IsReviewableDateReached(int requestId)
+    public Review CreateReview(Review review, Request request)
     {
-        return reviewInventory.IsReviewableDateReached(requestId);
-    }
-    
-    public bool HasStatusReceived(int requestId)
-    {
-        return reviewInventory.HasStatusReceived(requestId);
-    }
-    
-    public Review CreateReview(Review review)
-    {
-        if(!IsReviewableDateReached(review.RequestId))
+        if(!request.IsReviewable)
         {
-            throw new Exception("The request is not reviewable yet, please wait until the reviewable date.");
-        }
-        
-        if(!HasStatusReceived(review.RequestId))
-        {
-            throw new Exception("The request should be in the received state to create a review.");
+            throw new Exception("The request is not reviewable.");
         }
         
         var createdReview = reviewInventory.CreateReview(review);
-        stockManager.UpdateRequestState(review.Request, RequestState.Completed);
-
+        
+        stockManager.UpdateRequestState(request, RequestState.Completed);
+        
+        createdReview.Request = request;
+        notificationManager.SendNotificationToAdminWhenReviewSubmitted(createdReview);
+        
         return createdReview;
     }
 }

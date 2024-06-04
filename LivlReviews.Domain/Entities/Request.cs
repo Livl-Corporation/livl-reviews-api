@@ -1,9 +1,11 @@
+using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities.Interfaces;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Models;
 
 namespace LivlReviews.Domain.Entities;
 
-public class Request : ICreatedDate, IUpdatedDate
+public class Request() : ICreatedDate, IUpdatedDate
 {
     public int Id { get; set; }
     
@@ -25,6 +27,10 @@ public class Request : ICreatedDate, IUpdatedDate
     public DateTime UpdatedAt { get; set; }
     
     public DateTime? ReviewableAt { get; set; }
+
+    public IClock Clock {  private get; set; } = new Clock();
+    
+    public bool IsReviewable => State == RequestState.Received && ReviewableAt <= Clock.Now;
     
     public static bool Can(Role role, Operation operation)
     {

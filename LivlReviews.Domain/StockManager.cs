@@ -2,6 +2,7 @@ using LivlReviews.Domain.Domain_interfaces_input;
 using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Models;
 
 namespace LivlReviews.Domain;
 
@@ -24,13 +25,13 @@ public class StockManager(IRequestInventory requestInventory, INotificationManag
             throw new Exception("This product is not requestable by this user.");
         }
         
-        Request request = new Request
+        Request request = new Request()
         {
             ProductId = product.Id,
             AdminId = requester.InvitedByToken.InvitedByUserId,
             UserId = requester.Id,
             UserMessage = message,
-            State = RequestState.Pending
+            State = RequestState.Pending,
         };
         
         var res = requestInventory.CreateProductRequest(request);

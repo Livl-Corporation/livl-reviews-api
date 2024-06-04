@@ -1,5 +1,6 @@
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Enums;
+using LivlReviews.Domain.Models;
 using LivlReviews.Domain.Test.Fakes;
 using LivlReviews.Domain.Test.Spies;
 using LivlReviews.Domain.Test.Stubs;
@@ -101,22 +102,24 @@ public class RequestTests
             ProductId = 1
         };
         
-        Request firstRequest = new Request
+        Request firstRequest = new Request()
         {
             Id = 1,
             ProductId = 1,
             AdminId = "1",
             UserId = "2",
-            State = RequestState.Pending
+            State = RequestState.Pending,
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
 
-        Request secondRequest = new Request
+        Request secondRequest = new Request()
         {
             Id = 2,
             ProductId = 1,
             AdminId = "1",
             UserId = "3",
-            State = RequestState.Pending
+            State = RequestState.Pending,
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest, secondRequest], new NotificationManagerSpy());
@@ -150,13 +153,14 @@ public class RequestTests
             ProductId = 1
         };
         
-        Request firstRequest = new Request
+        Request firstRequest = new Request()
         {
             Id = 1,
             ProductId = 1,
             AdminId = "1",
             UserId = "2",
-            State = RequestState.Pending
+            State = RequestState.Pending,
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest], new NotificationManagerSpy());
@@ -218,13 +222,14 @@ public class RequestTests
             ProductId = 1
         };
         
-        Request firstRequest = new Request
+        Request firstRequest = new Request()
         {
             Id = 1,
             ProductId = 1,
             AdminId = UsersStub.Admin.Id,
             UserId = "2",
-            State = RequestState.Pending
+            State = RequestState.Pending,
+            Clock = new FakeClock(new DateTime(2024, 5, 28))
         };
 
         FakeRequestInventory requestInventory = new FakeRequestInventory([stock], [firstRequest], new NotificationManagerSpy());

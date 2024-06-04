@@ -1,4 +1,6 @@
-﻿namespace LivlReviews.Domain.Test.Clock;
+﻿using LivlReviews.Domain.Domain_interfaces_output;
+
+namespace LivlReviews.Domain.Models;
 
 public class FakeClock(DateTime fakeDateTime) : IClock
 {

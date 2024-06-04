@@ -9,6 +9,7 @@ public class NotificationManagerSpy : INotificationManager
     public bool IsSendAccountInvitationNotificationCalled { get; private set; }
     public bool IsSendRequestFromUserToAdminNotificationCalled { get; private set; }
     public bool IsSendNotificationToUserAboutRequestStateChangeCalled { get; private set; }
+    public bool IsSendReceivedReviewNotificationCalled { get; private set; }
     
     public Task SendAccountInvitationNotification(List<RecipientNotificationInvitation> recipientEmailInvitations)
     {
@@ -25,6 +26,12 @@ public class NotificationManagerSpy : INotificationManager
     public Task SendNotificationToUserAboutRequestStateChange(Request request)
     {
         IsSendNotificationToUserAboutRequestStateChangeCalled = true;
+        return Task.CompletedTask;
+    }
+    
+    public Task SendNotificationToAdminWhenReviewSubmitted(Review review)
+    {
+        IsSendReceivedReviewNotificationCalled = true;
         return Task.CompletedTask;
     }
 }
