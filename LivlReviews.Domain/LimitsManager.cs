@@ -7,14 +7,14 @@ namespace LivlReviews.Domain;
 
 public class LimitsManager(ILimitsInventory limitsInventory, IUserInventory userInventory): ILimitsManager
 {
-    public async void SetMaxRequests(int maxRequests, string userId)
+    public async Task SetMaxRequests(string userId, int maxRequests)
     {
-        IUser? user = await userInventory.GetUserById(userId);
-        if (user is null)
+        IUser? adminUser = await userInventory.GetUserById(userId);
+        if (adminUser is null)
         {
             throw new UserNotFoundException();
         }
-        if (!user.IsAdmin)
+        if (!adminUser.IsAdmin)
         {
             throw new UserNotAdministratorException();
         }
