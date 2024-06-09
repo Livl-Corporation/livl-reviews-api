@@ -1,5 +1,4 @@
 using LivlReviews.Domain.Domain_interfaces_input;
-using LivlReviews.Domain.Domain_interfaces_output;
 using LivlReviews.Domain.Entities;
 using LivlReviews.Domain.Exceptions;
 using LivlReviews.Domain.Test.Fakes;
@@ -8,10 +7,10 @@ using Xunit;
 
 namespace LivlReviews.Domain.Test.Limits;
 
-public class SetLimitTests
+public class SetMaxRequestsPerUsersTests
 {
     [Fact]
-    public void Should_Set_Max_Requests_If_User_Is_Admin()
+    public void Should_Set_Max_Requests_Per_User_If_User_Admin()
     {
         // Arrange
         var adminUser = UsersStub.Admin;
@@ -33,12 +32,12 @@ public class SetLimitTests
         ILimitsManager limitsManager = new LimitsManager(limitConfigsInventory, userInventory);
 
         // Act
-        limitsManager.SetMaxRequests(adminUser.Id, newLimit);
+        limitsManager.SetMaxRequestsPerUsers(adminUser.Id, newLimit);
 
         // Assert
-        Assert.Equal(newLimit, limitConfigsInventory.GetLimitsByAdminId(adminUser.Id).MaxRequests);
+        Assert.Equal(newLimit, limitConfigsInventory.GetLimitsByAdminId(adminUser.Id).MaxRequestsPerUser);
     }
-
+    
     [Fact]
     public void Should_Throw_If_Requester_Not_Admin()
     {
@@ -61,15 +60,15 @@ public class SetLimitTests
         FakeUserInventory userInventory = new FakeUserInventory([user]);
         ILimitsManager limitsManager = new LimitsManager(limitConfigsInventory, userInventory);
 
-        // Act
-        Task Act () => limitsManager.SetMaxRequests(user.Id, newLimit);
-
+        // Act 
+        Task Act () => limitsManager.SetMaxRequestsPerUsers(user.Id, newLimit);
+        
         // Assert
         Assert.ThrowsAsync<UserNotAdministratorException>(Act);
     }
     
     [Fact]
-    public void Should_Throw_If_User_Do_Not_Exist()
+    public void Should_Throw_If_User_Not_Found()
     {
         // Arrange
         var user = UsersStub.User;
@@ -90,9 +89,9 @@ public class SetLimitTests
         FakeUserInventory userInventory = new FakeUserInventory([user]);
         ILimitsManager limitsManager = new LimitsManager(limitConfigsInventory, userInventory);
 
-        // Act
-        Task Act () => limitsManager.SetMaxRequests("123", newLimit);
-
+        // Act 
+        Task Act () => limitsManager.SetMaxRequestsPerUsers("not_found", newLimit);
+        
         // Assert
         Assert.ThrowsAsync<UserNotFoundException>(Act);
     }

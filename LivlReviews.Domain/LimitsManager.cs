@@ -21,4 +21,19 @@ public class LimitsManager(ILimitsInventory limitsInventory, IUserInventory user
         
         limitsInventory.SetMaxRequests(maxRequests, userId);
     }
+
+    public async Task SetMaxRequestsPerUsers(string userId, int maxRequestsPerUser)
+    {
+        IUser? adminUser = await userInventory.GetUserById(userId);
+        if (adminUser is null)
+        {
+            throw new UserNotFoundException();
+        }
+        if (!adminUser.IsAdmin)
+        {
+            throw new UserNotAdministratorException();
+        }
+        
+        limitsInventory.SetMaxRequestsPerUser(maxRequestsPerUser, userId);
+    }
 }
